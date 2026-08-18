@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Valence View</title>
+<meta name="description" content="Interactive 2D/3D visualizations of valence electron orbitals for all 118 elements, with full mathematical derivations and in-browser verification.">
+<meta property="og:title" content="Valence View">
+<meta property="og:description" content="Interactive 2D/3D visualizations of valence electron orbitals for all 118 elements, with full mathematical derivations and in-browser verification.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/base.css?v=1">
+<link rel="stylesheet" href="css/layout.css?v=1">
+<link rel="stylesheet" href="css/components.css?v=1">
+<script defer src="js/core/namespace.js?v=1"></script>
+<script defer src="js/core/constants.js?v=1"></script>
+<script defer src="js/core/frac.js?v=1"></script>
+<script defer src="js/core/quadrature.js?v=1"></script>
+<script defer src="js/core/special.js?v=1"></script>
+<script defer src="js/core/elements-data.js?v=1"></script>
+<script defer src="js/core/slater.js?v=1"></script>
+<script defer src="js/core/hydrogenic.js?v=1"></script>
+<script defer src="js/core/symbolic.js?v=1"></script>
+<script defer src="js/core/derived.js?v=1"></script>
+<script defer src="js/spec/magnetic.js?v=1"></script>
+<script defer src="js/spec/lcao.js?v=1"></script>
+<script defer src="js/render/mat.js?v=1"></script>
+<script defer src="js/render/gl-core.js?v=1"></script>
+<script defer src="js/render/camera.js?v=1"></script>
+<script defer src="js/render/mc-tables.js?v=1"></script>
+<script defer src="js/render/isosurface.js?v=1"></script>
+<script defer src="js/render/sampling.js?v=1"></script>
+<script defer src="js/render/pointcloud.js?v=1"></script>
+<script defer src="js/render/scene.js?v=1"></script>
+<script defer src="js/render/anim.js?v=1"></script>
+<script defer src="js/plot/colormaps.js?v=1"></script>
+<script defer src="js/plot/plot2d.js?v=1"></script>
+<script defer src="js/ui/state.js?v=1"></script>
+<script defer src="js/ui/url.js?v=1"></script>
+<script defer src="js/ui/mathml.js?v=1"></script>
+<script defer src="js/ui/tabs.js?v=1"></script>
+<script defer src="js/ui/periodic-table.js?v=1"></script>
+<script defer src="js/ui/orbital-picker.js?v=1"></script>
+<script defer src="js/ui/controls.js?v=1"></script>
+<script defer src="js/ui/field-panel.js?v=1"></script>
+<script defer src="js/ui/companion-panel.js?v=1"></script>
+<script defer src="js/ui/info-panel.js?v=1"></script>
+<script defer src="js/ui/tour.js?v=1"></script>
+<script defer src="js/ui/viz-glue.js?v=1"></script>
+<script defer src="js/ui/app.js?v=1"></script>
+</head>
+<body>
+<a class="visually-hidden-focusable" href="#viz-tabs">Skip to visualization</a>
+
+<header class="site-header">
+  <a class="brand" href="index.html"><img src="favicon.svg" alt="" width="20" height="20"> Valence View</a>
+  <nav aria-label="Site">
+    <a aria-current="page" href="index.html">App</a><a href="theory.html">Theory</a><a href="verify.html">Verify</a><button id="start-tour" type="button">Tour</button>
+  </nav>
+</header>
+
+<div id="speculative-banner" hidden>SPECULATIVE MODE — first-order approximation, not ab-initio. <a href="theory.html#zeeman">Details</a></div>
+<div id="error-banner" role="alert" hidden></div>
+
+<noscript>
+  <div class="noscript-block">
+    <p><strong>Valence View needs JavaScript</strong> to compute and draw orbitals — nothing is loaded from a server and no data leaves your browser. The <a href="theory.html">theory page</a> is fully readable without JavaScript.</p>
+  </div>
+</noscript>
+
+<main class="app-grid">
+  <aside id="picker-col">
+    <label class="visually-hidden" for="element-select">Element</label>
+    <select id="element-select"></select>
+    <div id="common-strip" role="group" aria-label="Common elements"></div>
+    <details id="ptable-wrap" open>
+      <summary>Periodic table</summary>
+      <div class="ptable-scroll">
+        <div id="ptable" role="grid" aria-label="Periodic table"></div>
+      </div>
+    </details>
+    <section id="orbital-picker" aria-label="Valence orbitals"></section>
+  </aside>
+
+  <section id="viz-col">
+    <div id="viz-tabs" role="tablist" aria-label="Visualization" tabindex="-1"></div>
+    <div id="tour-card" hidden></div>
+    <div id="viz-3d" class="viz-panel" role="tabpanel">
+      <div id="scene-host"></div>
+      <div id="webgl-fallback" hidden>
+        <p><strong>Interactive 3D requires WebGL</strong>, which isn't available here. All 2D views remain fully functional — the cross-section heatmap, radial plots and angular plots show the same physics.</p>
+      </div>
+    </div>
+    <div id="viz-2d" class="viz-panel" role="tabpanel">
+      <div class="plot2d-bar">
+        <label for="plot2d-mode">Plot</label>
+        <select id="plot2d-mode">
+          <option value="radial">Radial R(r), r²R²</option>
+          <option value="slice">Cross-section ψ</option>
+          <option value="angular">Angular |Y(θ)|</option>
+        </select>
+        <label for="plot2d-plane">Plane</label>
+        <select id="plot2d-plane">
+          <option value="xz">xz</option>
+          <option value="xy">xy</option>
+          <option value="yz">yz</option>
+        </select>
+      </div>
+      <div id="plot2d-host" role="img"></div>
+    </div>
+    <section id="info-panel" aria-label="Orbital details"></section>
+  </section>
+
+  <aside id="controls-col">
+    <details class="ctl-group" id="group-view" open>
+      <summary>View</summary>
+      <div class="ctl-body"></div>
+    </details>
+    <details class="ctl-group" id="group-anim" open>
+      <summary>Animation</summary>
+      <div class="ctl-body"></div>
+    </details>
+    <details class="ctl-group" id="group-field" open>
+      <summary>Magnetic field <span class="badge-spec">Speculative</span></summary>
+      <div class="ctl-body"></div>
+    </details>
+    <details class="ctl-group" id="group-comp" open>
+      <summary>Companion <span class="badge-spec">Speculative</span></summary>
+      <div class="ctl-body"></div>
+    </details>
+  </aside>
+</main>
+
+<div id="sr-status" role="status" aria-live="polite" class="visually-hidden"></div>
+</body>
+</html>

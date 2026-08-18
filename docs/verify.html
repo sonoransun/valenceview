@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="In-browser numerical verification of Valence View's orbital mathematics: normalization, orthogonality, expectation values, node counts, symbolic-vs-numeric anchors, and honest informational checks of the Slater model's limits.">
+<meta name="color-scheme" content="dark light">
+<title>Verify — Valence View</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/base.css?v=1">
+<link rel="stylesheet" href="css/article.css?v=1">
+<script defer src="js/core/namespace.js?v=1"></script>
+<script defer src="js/core/constants.js?v=1"></script>
+<script defer src="js/core/frac.js?v=1"></script>
+<script defer src="js/core/quadrature.js?v=1"></script>
+<script defer src="js/core/special.js?v=1"></script>
+<script defer src="js/core/elements-data.js?v=1"></script>
+<script defer src="js/core/slater.js?v=1"></script>
+<script defer src="js/core/hydrogenic.js?v=1"></script>
+<script defer src="js/core/symbolic.js?v=1"></script>
+<script defer src="js/core/derived.js?v=1"></script>
+<script defer src="js/spec/magnetic.js?v=1"></script>
+<script defer src="js/spec/lcao.js?v=1"></script>
+<script defer src="js/render/mat.js?v=1"></script>
+<script defer src="js/render/mc-tables.js?v=1"></script>
+<script defer src="js/render/isosurface.js?v=1"></script>
+<script defer src="js/core/verify.js?v=1"></script>
+<script defer src="js/ui/verify-page.js?v=1"></script>
+</head>
+<body class="article-page">
+<header class="site-header">
+  <a class="brand" href="index.html"><img src="favicon.svg" alt="" width="20" height="20"> Valence View</a>
+  <nav aria-label="Site">
+    <a href="index.html">App</a><a href="theory.html">Theory</a><a aria-current="page" href="verify.html">Verify</a>
+  </nav>
+</header>
+
+<div class="article-shell">
+<main class="article">
+
+<h1>Verification suite</h1>
+
+<p class="lede">This page runs Valence View's numerical test suite in your
+browser — the same code that draws the orbitals, checked against
+closed-form mathematics by Gauss–Legendre quadrature. No server, no
+pre-computed results: every number in the table below is computed when you
+load the page.</p>
+
+<p><strong>What is verified, precisely:</strong> the basis functions and
+their advertised mathematical properties. Normalization
+(∫|ψ|² = 1), orthogonality within a shell, closed-form expectation values
+⟨r⟩, radial/angular node counts, agreement between independent
+implementations (Horner-evaluated Laguerre coefficients vs. a three-term
+recurrence; generated symbolic formulas vs. the textbook tables printed on
+the <a href="theory.html">theory page</a>), Zeeman splitting symmetry, LCAO
+limiting behavior, and the marching-cubes surface extractor against an
+analytic sphere.</p>
+
+<p><strong>What is only estimated, and not "verified" into being accurate
+physics:</strong> Slater's <i>Z</i><sub>eff</sub> and the orbital energies
+built from it. These are checked for internal consistency (exact rational
+regression values, configuration bookkeeping across all 118 elements), and
+their known deviations from SCF reference values (Clementi–Raimondi) are
+<em>reported</em> as informational rows — marked
+<span class="badge info">Info</span> — which never pass or fail. The same
+applies to the speculative magnetic-field and LCAO models: their limits are
+checked, their accuracy is not claimed. See the theory page's
+<a href="theory.html#slater">limitations</a> and
+<a href="theory.html#verification">verification</a> sections for the full
+statement.</p>
+
+<p id="verify-note">Opening this page with an orbital fragment in the URL —
+e.g. <code>verify.html#Fe-3d_z2</code> from the app's "Verify this orbital"
+link — appends that specific orbital's checks (normalization, ⟨r⟩, node
+counts, <i>Z</i><sub>eff</sub>, energy) to the full run.</p>
+
+<noscript><p><strong>JavaScript is disabled.</strong> The verification
+suite is computed live in your browser and cannot run without it. The
+mathematics being tested is described on the
+<a href="theory.html">theory page</a>, which is fully readable without
+JavaScript.</p></noscript>
+
+<div id="verify-status" role="status">Idle — the suite starts automatically.</div>
+<progress id="verify-progress" max="1" value="0" aria-label="Verification progress"></progress>
+<div class="verify-toolbar">
+  <button id="verify-run" type="button" class="btn">Run all checks</button>
+</div>
+
+<div class="table-wrap">
+<table id="verify-table">
+  <thead>
+    <tr>
+      <th scope="col">Check</th>
+      <th scope="col">Subject</th>
+      <th scope="col">Computed</th>
+      <th scope="col">Expected</th>
+      <th scope="col">Error</th>
+      <th scope="col">Tol</th>
+      <th scope="col">Result</th>
+    </tr>
+  </thead>
+  <tbody id="verify-tbody"></tbody>
+</table>
+</div>
+
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Complete mathematical derivation of the hydrogenic orbitals shown by Valence View: Schrödinger equation, spherical harmonics, real orbitals, generalized-Laguerre radial functions, Slater screening, and the clearly-labeled speculative Zeeman and LCAO models.">
+<meta name="color-scheme" content="dark light">
+<title>Theory — Valence View</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/base.css?v=1">
+<link rel="stylesheet" href="css/article.css?v=1">
+<script defer src="js/core/namespace.js?v=1"></script>
+<script defer src="js/ui/mathml.js?v=1"></script>
+<script defer src="js/ui/theory-page.js?v=1"></script>
+</head>
+<body class="article-page">
+<header class="site-header">
+  <a class="brand" href="index.html"><img src="favicon.svg" alt="" width="20" height="20"> Valence View</a>
+  <nav aria-label="Site">
+    <a href="index.html">App</a><a aria-current="page" href="theory.html">Theory</a><a href="verify.html">Verify</a>
+  </nav>
+</header>
+
+<div class="article-shell with-toc">
+
+<nav id="toc" aria-label="Contents">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#overview">Overview &amp; honesty</a></li>
+    <li><a href="#schrodinger">Schrödinger equation</a></li>
+    <li><a href="#separation">Separation of variables</a></li>
+    <li><a href="#angular">Angular solutions</a></li>
+    <li><a href="#real-orbitals">Real orbitals</a></li>
+    <li><a href="#radial">Radial solutions</a></li>
+    <li><a href="#energies">Energies &amp; expectation values</a></li>
+    <li><a href="#slater">Slater screening</a></li>
+    <li><a href="#zeeman">Magnetic field (speculative)</a></li>
+    <li><a href="#lcao">Two-center LCAO (speculative)</a></li>
+    <li><a href="#superstructure">Superstructures (speculative)</a></li>
+    <li><a href="#verification">Verification</a></li>
+    <li><a href="#references">References</a></li>
+  </ol>
+</nav>
+
+<main class="article">
+
+<h1>The mathematics behind Valence View</h1>
+
+<section id="overview">
+<h2>1. Overview &amp; honesty statement</h2>
+
+<p class="lede">Every orbital drawn by <a href="index.html">the app</a> is a
+hydrogen-like wavefunction: an exact solution of the one-electron Coulomb
+problem, evaluated with an <em>effective</em> nuclear charge
+<i>Z</i><sub>eff</sub> obtained from Slater's screening rules. This page
+states, formula by formula, exactly what the code computes — same
+conventions, same normalizations, same constants. The
+<a href="verify.html">verification suite</a> checks these statements
+numerically in your browser, including a <code>theory-anchors</code> group
+that compares the closed-form tables printed on this page against the
+program's independently generated symbolic coefficients.</p>
+
+<p>What the model captures well: orbital <em>shapes</em>, nodal structure,
+degeneracy patterns, and periodic trends in size and binding. What it does
+not capture: electron–electron correlation, exchange, self-consistency,
+relativity, or spin. It is the standard teaching model of atomic structure —
+quantitatively rough for many-electron atoms, and honest about it
+(see <a href="#slater">§8</a>). The magnetic-field and companion-element
+modes are first-order estimates and are labeled
+<span class="badge-spec">Speculative</span> both here and in the app.</p>
+
+<p>Conventions used throughout this page and the code: lengths in Bohr radii
+(<i>a</i><sub>0</sub> = 52.9177&nbsp;pm), energies in electron-volts, magnetic
+field in tesla; <i>r</i> is always dimensionless (units of
+<i>a</i><sub>0</sub>) and <i>Z</i> denotes <i>Z</i><sub>eff</sub> unless
+stated otherwise. The magnetic-field and bond axis is always the global
++<i>z</i> axis — the renderer rotates the scene, never the physics.</p>
+</section>
+
+<section id="schrodinger">
+<h2>2. The Schrödinger equation</h2>
+
+<p>A single electron bound to a point charge +<i>Ze</i> obeys the
+time-independent Schrödinger equation</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mo>[</mo>
+    <mo>−</mo>
+    <mfrac><msup><mi>ℏ</mi><mn>2</mn></msup><mrow><mn>2</mn><msub><mi>m</mi><mi>e</mi></msub></mrow></mfrac>
+    <msup><mo>∇</mo><mn>2</mn></msup>
+    <mo>−</mo>
+    <mfrac><mrow><mi>Z</mi><msup><mi>e</mi><mn>2</mn></msup></mrow><mrow><mn>4</mn><mi>π</mi><msub><mi>ε</mi><mn>0</mn></msub><mi>r</mi></mrow></mfrac>
+    <mo>]</mo>
+    <mi>ψ</mi>
+    <mo>=</mo>
+    <mi>E</mi><mi>ψ</mi>
+  </mrow>
+</math>
+<span class="formula-ascii">[ -hbar^2/(2 m_e) nabla^2 - Z e^2/(4 pi eps0 r) ] psi = E psi</span>
+</div>
+
+<p>In Hartree atomic units (lengths in <i>a</i><sub>0</sub>, energies in
+hartree; 1&nbsp;hartree = 2&nbsp;Ry = 27.2114&nbsp;eV) this collapses to</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mrow>
+      <mo>(</mo>
+      <mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msup><mo>∇</mo><mn>2</mn></msup>
+      <mo>−</mo><mfrac><mi>Z</mi><mi>r</mi></mfrac>
+      <mo>)</mo>
+    </mrow>
+    <mi>ψ</mi><mo>=</mo><mi>E</mi><mi>ψ</mi>
+  </mrow>
+</math>
+<span class="formula-ascii">( -(1/2) nabla^2 - Z/r ) psi = E psi</span>
+</div>
+
+<p>which is the form the rest of this page uses. The Coulomb potential is
+central — it depends only on <i>r</i> — which is what makes an exact
+separation into radial and angular factors possible.</p>
+</section>
+
+<section id="separation">
+<h2>3. Separation of variables</h2>
+
+<p>In spherical coordinates (<i>r</i>, θ, φ) the ansatz</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msub><mi>ψ</mi><mrow><mi>n</mi><mi>l</mi><mi>m</mi></mrow></msub>
+    <mo>(</mo><mi>r</mi><mo>,</mo><mi>θ</mi><mo>,</mo><mi>φ</mi><mo>)</mo>
+    <mo>=</mo>
+    <msub><mi>R</mi><mrow><mi>n</mi><mi>l</mi></mrow></msub><mo>(</mo><mi>r</mi><mo>)</mo>
+    <mspace width="0.2em"></mspace>
+    <msubsup><mi>Y</mi><mi>l</mi><mi>m</mi></msubsup>
+    <mo>(</mo><mi>θ</mi><mo>,</mo><mi>φ</mi><mo>)</mo>
+  </mrow>
+</math>
+<span class="formula-ascii">psi_nlm(r, theta, phi) = R_nl(r) * Y_l^m(theta, phi)</span>
+</div>
+
+<p>splits the equation into an angular eigenvalue problem whose separation
+constant is <i>l</i>(<i>l</i>+1), solved by the spherical harmonics
+(<a href="#angular">§4</a>), and a one-dimensional radial equation</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mo>−</mo>
+    <mfrac><mn>1</mn><mrow><mn>2</mn><msup><mi>r</mi><mn>2</mn></msup></mrow></mfrac>
+    <mfrac><mi>d</mi><mrow><mi>d</mi><mi>r</mi></mrow></mfrac>
+    <mrow>
+      <mo>(</mo>
+      <msup><mi>r</mi><mn>2</mn></msup>
+      <mfrac><mrow><mi>d</mi><mi>R</mi></mrow><mrow><mi>d</mi><mi>r</mi></mrow></mfrac>
+      <mo>)</mo>
+    </mrow>
+    <mo>+</mo>
+    <mrow>
+      <mo>[</mo>
+      <mfrac><mrow><mi>l</mi><mo>(</mo><mi>l</mi><mo>+</mo><mn>1</mn><mo>)</mo></mrow><mrow><mn>2</mn><msup><mi>r</mi><mn>2</mn></msup></mrow></mfrac>
+      <mo>−</mo>
+      <mfrac><mi>Z</mi><mi>r</mi></mfrac>
+      <mo>]</mo>
+    </mrow>
+    <mi>R</mi>
+    <mo>=</mo>
+    <mi>E</mi><mi>R</mi>
+  </mrow>
+</math>
+<span class="formula-ascii">-(1/(2 r^2)) d/dr ( r^2 dR/dr ) + [ l(l+1)/(2 r^2) - Z/r ] R = E R</span>
+</div>
+
+<p>solved in <a href="#radial">§6</a>. Square-integrability quantizes the
+solutions: the principal quantum number <i>n</i> = 1, 2, 3, …; the orbital
+quantum number <i>l</i> = 0 … <i>n</i>−1 (letters s, p, d, f); and the
+magnetic quantum number <i>m</i> = −<i>l</i> … +<i>l</i>. Normalization is
+split conventionally as</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mrow>
+      <msubsup><mo>∫</mo><mn>0</mn><mi>∞</mi></msubsup>
+      <msup><mi>r</mi><mn>2</mn></msup>
+      <msubsup><mi>R</mi><mrow><mi>n</mi><mi>l</mi></mrow><mn>2</mn></msubsup>
+      <mspace width="0.2em"></mspace><mi>d</mi><mi>r</mi>
+    </mrow>
+    <mo>=</mo><mn>1</mn>
+    <mo>,</mo>
+    <mspace width="1.2em"></mspace>
+    <mrow>
+      <mo>∫</mo>
+      <msup><mrow><mo>|</mo><msubsup><mi>Y</mi><mi>l</mi><mi>m</mi></msubsup><mo>|</mo></mrow><mn>2</mn></msup>
+      <mspace width="0.2em"></mspace><mi>d</mi><mi>Ω</mi>
+    </mrow>
+    <mo>=</mo><mn>1</mn>
+  </mrow>
+</math>
+<span class="formula-ascii">integral_0^inf r^2 R_nl^2 dr = 1 ,   integral |Y_l^m|^2 dOmega = 1</span>
+</div>
+
+<p>so that each factor is separately normalized — exactly the two integrals
+the <a href="verify.html">verify suite</a> evaluates.</p>
+</section>
+
+<section id="angular">
+<h2>4. Angular solutions: associated Legendre and spherical harmonics</h2>
+
+<p>The code computes associated Legendre functions in <i>x</i> = cos θ
+<strong>with the Condon–Shortley phase (−1)<sup><i>m</i></sup> included
+inside <i>P<sub>l</sub><sup>m</sup></i></strong> (the physics convention),
+using the standard stable recurrence:</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msubsup><mi>P</mi><mi>m</mi><mi>m</mi></msubsup><mo>(</mo><mi>x</mi><mo>)</mo>
+    <mo>=</mo>
+    <msup><mrow><mo>(</mo><mo>−</mo><mn>1</mn><mo>)</mo></mrow><mi>m</mi></msup>
+    <mrow><mo>(</mo><mn>2</mn><mi>m</mi><mo>−</mo><mn>1</mn><mo>)</mo></mrow><mo>!!</mo>
+    <mspace width="0.2em"></mspace>
+    <msup><mrow><mo>(</mo><mn>1</mn><mo>−</mo><msup><mi>x</mi><mn>2</mn></msup><mo>)</mo></mrow><mrow><mi>m</mi><mo>/</mo><mn>2</mn></mrow></msup>
+  </mrow>
+</math>
+<span class="formula-ascii">P_m^m(x) = (-1)^m (2m-1)!! (1 - x^2)^(m/2)</span>
+<math display="block">
+  <mrow>
+    <msubsup><mi>P</mi><mrow><mi>m</mi><mo>+</mo><mn>1</mn></mrow><mi>m</mi></msubsup><mo>(</mo><mi>x</mi><mo>)</mo>
+    <mo>=</mo>
+    <mrow><mo>(</mo><mn>2</mn><mi>m</mi><mo>+</mo><mn>1</mn><mo>)</mo></mrow>
+    <mspace width="0.15em"></mspace><mi>x</mi><mspace width="0.15em"></mspace>
+    <msubsup><mi>P</mi><mi>m</mi><mi>m</mi></msubsup><mo>(</mo><mi>x</mi><mo>)</mo>
+  </mrow>
+</math>
+<span class="formula-ascii">P_(m+1)^m(x) = (2m+1) x P_m^m(x)</span>
+<math display="block">
+  <mrow>
+    <mrow><mo>(</mo><mi>l</mi><mo>−</mo><mi>m</mi><mo>)</mo></mrow>
+    <msubsup><mi>P</mi><mi>l</mi><mi>m</mi></msubsup><mo>(</mo><mi>x</mi><mo>)</mo>
+    <mo>=</mo>
+    <mrow><mo>(</mo><mn>2</mn><mi>l</mi><mo>−</mo><mn>1</mn><mo>)</mo></mrow>
+    <mspace width="0.15em"></mspace><mi>x</mi><mspace width="0.15em"></mspace>
+    <msubsup><mi>P</mi><mrow><mi>l</mi><mo>−</mo><mn>1</mn></mrow><mi>m</mi></msubsup><mo>(</mo><mi>x</mi><mo>)</mo>
+    <mo>−</mo>
+    <mrow><mo>(</mo><mi>l</mi><mo>+</mo><mi>m</mi><mo>−</mo><mn>1</mn><mo>)</mo></mrow>
+    <msubsup><mi>P</mi><mrow><mi>l</mi><mo>−</mo><mn>2</mn></mrow><mi>m</mi></msubsup><mo>(</mo><mi>x</mi><mo>)</mo>
+  </mrow>
+</math>
+<span class="formula-ascii">(l - m) P_l^m(x) = (2l-1) x P_(l-1)^m(x) - (l+m-1) P_(l-2)^m(x)</span>
+</div>
+
+<p>The complex spherical harmonics are then, for <i>m</i> ≥ 0,</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msubsup><mi>Y</mi><mi>l</mi><mi>m</mi></msubsup>
+    <mo>(</mo><mi>θ</mi><mo>,</mo><mi>φ</mi><mo>)</mo>
+    <mo>=</mo>
+    <msub><mi>N</mi><mrow><mi>l</mi><mi>m</mi></mrow></msub>
+    <mspace width="0.15em"></mspace>
+    <msubsup><mi>P</mi><mi>l</mi><mi>m</mi></msubsup>
+    <mo>(</mo><mi>cos</mi><mi>θ</mi><mo>)</mo>
+    <mspace width="0.15em"></mspace>
+    <msup><mi>e</mi><mrow><mi>i</mi><mi>m</mi><mi>φ</mi></mrow></msup>
+    <mo>,</mo>
+    <mspace width="1.2em"></mspace>
+    <msub><mi>N</mi><mrow><mi>l</mi><mi>m</mi></mrow></msub>
+    <mo>=</mo>
+    <msqrt><mrow>
+      <mfrac><mrow><mn>2</mn><mi>l</mi><mo>+</mo><mn>1</mn></mrow><mrow><mn>4</mn><mi>π</mi></mrow></mfrac>
+      <mo>·</mo>
+      <mfrac>
+        <mrow><mo>(</mo><mi>l</mi><mo>−</mo><mo>|</mo><mi>m</mi><mo>|</mo><mo>)</mo><mo>!</mo></mrow>
+        <mrow><mo>(</mo><mi>l</mi><mo>+</mo><mo>|</mo><mi>m</mi><mo>|</mo><mo>)</mo><mo>!</mo></mrow>
+      </mfrac>
+    </mrow></msqrt>
+  </mrow>
+</math>
+<span class="formula-ascii">Y_l^m(theta, phi) = N_lm P_l^m(cos theta) e^(i m phi) ,   N_lm = sqrt( (2l+1)/(4 pi) * (l-|m|)!/(l+|m|)! )</span>
+</div>
+
+<p>with negative orders defined by conjugation:</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msubsup><mi>Y</mi><mi>l</mi><mrow><mo>−</mo><mi>m</mi></mrow></msubsup>
+    <mo>=</mo>
+    <msup><mrow><mo>(</mo><mo>−</mo><mn>1</mn><mo>)</mo></mrow><mi>m</mi></msup>
+    <msup><mrow><mo>(</mo><msubsup><mi>Y</mi><mi>l</mi><mi>m</mi></msubsup><mo>)</mo></mrow><mo>*</mo></msup>
+  </mrow>
+</math>
+<span class="formula-ascii">Y_l^(-m) = (-1)^m conj(Y_l^m)</span>
+</div>
+
+<p>The explicit harmonics for <i>l</i> ≤ 2 — the forms the
+<code>theory-anchors</code> verify group checks against the generated
+coefficients:</p>
+
+<div class="table-wrap">
+<table class="formula-table">
+<caption>Complex spherical harmonics, <i>l</i> ≤ 2 (Condon–Shortley phase included).</caption>
+<thead><tr><th scope="col"><i>l</i></th><th scope="col"><i>m</i></th><th scope="col">Y<sub>l</sub><sup>m</sup>(θ, φ)</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>0</td><td>
+<math><mrow><msubsup><mi>Y</mi><mn>0</mn><mn>0</mn></msubsup><mo>=</mo><mfrac><mn>1</mn><mrow><mn>2</mn><msqrt><mi>π</mi></msqrt></mrow></mfrac></mrow></math>
+<span class="formula-ascii">Y_0^0 = 1/(2 sqrt(pi))</span>
+</td></tr>
+<tr><td>1</td><td>0</td><td>
+<math><mrow><msubsup><mi>Y</mi><mn>1</mn><mn>0</mn></msubsup><mo>=</mo><msqrt><mfrac><mn>3</mn><mrow><mn>4</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mi>cos</mi><mi>θ</mi></mrow></math>
+<span class="formula-ascii">Y_1^0 = sqrt(3/(4 pi)) cos theta</span>
+</td></tr>
+<tr><td>1</td><td>±1</td><td>
+<math><mrow><msubsup><mi>Y</mi><mn>1</mn><mrow><mo>±</mo><mn>1</mn></mrow></msubsup><mo>=</mo><mo>∓</mo><msqrt><mfrac><mn>3</mn><mrow><mn>8</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mi>sin</mi><mi>θ</mi><mspace width="0.15em"></mspace><msup><mi>e</mi><mrow><mo>±</mo><mi>i</mi><mi>φ</mi></mrow></msup></mrow></math>
+<span class="formula-ascii">Y_1^(+-1) = -+ sqrt(3/(8 pi)) sin theta e^(+- i phi)</span>
+</td></tr>
+<tr><td>2</td><td>0</td><td>
+<math><mrow><msubsup><mi>Y</mi><mn>2</mn><mn>0</mn></msubsup><mo>=</mo><msqrt><mfrac><mn>5</mn><mrow><mn>16</mn><mi>π</mi></mrow></mfrac></msqrt><mrow><mo>(</mo><mn>3</mn><msup><mi>cos</mi><mn>2</mn></msup><mi>θ</mi><mo>−</mo><mn>1</mn><mo>)</mo></mrow></mrow></math>
+<span class="formula-ascii">Y_2^0 = sqrt(5/(16 pi)) (3 cos^2 theta - 1)</span>
+</td></tr>
+<tr><td>2</td><td>±1</td><td>
+<math><mrow><msubsup><mi>Y</mi><mn>2</mn><mrow><mo>±</mo><mn>1</mn></mrow></msubsup><mo>=</mo><mo>∓</mo><msqrt><mfrac><mn>15</mn><mrow><mn>8</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mi>sin</mi><mi>θ</mi><mspace width="0.15em"></mspace><mi>cos</mi><mi>θ</mi><mspace width="0.15em"></mspace><msup><mi>e</mi><mrow><mo>±</mo><mi>i</mi><mi>φ</mi></mrow></msup></mrow></math>
+<span class="formula-ascii">Y_2^(+-1) = -+ sqrt(15/(8 pi)) sin theta cos theta e^(+- i phi)</span>
+</td></tr>
+<tr><td>2</td><td>±2</td><td>
+<math><mrow><msubsup><mi>Y</mi><mn>2</mn><mrow><mo>±</mo><mn>2</mn></mrow></msubsup><mo>=</mo><msqrt><mfrac><mn>15</mn><mrow><mn>32</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><msup><mi>sin</mi><mn>2</mn></msup><mi>θ</mi><mspace width="0.15em"></mspace><msup><mi>e</mi><mrow><mo>±</mo><mn>2</mn><mi>i</mi><mi>φ</mi></mrow></msup></mrow></math>
+<span class="formula-ascii">Y_2^(+-2) = sqrt(15/(32 pi)) sin^2 theta e^(+- 2 i phi)</span>
+</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>For <i>m</i> ≠ 0, |Y<sub>l</sub><sup>m</sup>|² is independent of φ — the
+familiar donut-shaped densities. The <em>phase</em> is not: it circulates as
+<i>e<sup>imφ</sup></i>, which is what the app's phase-coloring animation
+shows for complex orbitals.</p>
+</section>
+
+<section id="real-orbitals">
+<h2>5. Real orbitals: the chemistry combinations</h2>
+
+<p>The orbitals chemists draw — p<sub>x</sub>, d<sub>xy</sub>, … — are the
+real linear combinations <i>S<sub>l,m</sub></i> of the ±<i>m</i> pairs. With
+the Condon–Shortley phase already inside
+<i>P<sub>l</sub><sup>m</sup></i>, the code uses</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msub><mi>S</mi><mrow><mi>l</mi><mo>,</mo><mn>0</mn></mrow></msub>
+    <mo>=</mo>
+    <msub><mi>N</mi><mrow><mi>l</mi><mn>0</mn></mrow></msub>
+    <msubsup><mi>P</mi><mi>l</mi><mn>0</mn></msubsup>
+    <mo>(</mo><mi>cos</mi><mi>θ</mi><mo>)</mo>
+  </mrow>
+</math>
+<span class="formula-ascii">S_(l,0) = N_l0 P_l^0(cos theta)</span>
+<math display="block">
+  <mrow>
+    <msub><mi>S</mi><mrow><mi>l</mi><mo>,</mo><mi>m</mi></mrow></msub>
+    <mo>=</mo>
+    <msqrt><mn>2</mn></msqrt>
+    <mspace width="0.15em"></mspace>
+    <msup><mrow><mo>(</mo><mo>−</mo><mn>1</mn><mo>)</mo></mrow><mi>m</mi></msup>
+    <msub><mi>N</mi><mrow><mi>l</mi><mi>m</mi></mrow></msub>
+    <msubsup><mi>P</mi><mi>l</mi><mi>m</mi></msubsup>
+    <mo>(</mo><mi>cos</mi><mi>θ</mi><mo>)</mo>
+    <mspace width="0.15em"></mspace>
+    <mi>cos</mi><mrow><mi>m</mi><mi>φ</mi></mrow>
+    <mspace width="1.2em"></mspace>
+    <mtext>(m &gt; 0)</mtext>
+  </mrow>
+</math>
+<span class="formula-ascii">S_(l,m) = sqrt(2) (-1)^m N_lm P_l^m(cos theta) cos(m phi)   (m &gt; 0)</span>
+<math display="block">
+  <mrow>
+    <msub><mi>S</mi><mrow><mi>l</mi><mo>,</mo><mo>−</mo><mi>m</mi></mrow></msub>
+    <mo>=</mo>
+    <msqrt><mn>2</mn></msqrt>
+    <mspace width="0.15em"></mspace>
+    <msup><mrow><mo>(</mo><mo>−</mo><mn>1</mn><mo>)</mo></mrow><mi>m</mi></msup>
+    <msub><mi>N</mi><mrow><mi>l</mi><mi>m</mi></mrow></msub>
+    <msubsup><mi>P</mi><mi>l</mi><mi>m</mi></msubsup>
+    <mo>(</mo><mi>cos</mi><mi>θ</mi><mo>)</mo>
+    <mspace width="0.15em"></mspace>
+    <mi>sin</mi><mrow><mi>m</mi><mi>φ</mi></mrow>
+    <mspace width="1.2em"></mspace>
+    <mtext>(m &gt; 0)</mtext>
+  </mrow>
+</math>
+<span class="formula-ascii">S_(l,-m) = sqrt(2) (-1)^m N_lm P_l^m(cos theta) sin(m phi)   (m &gt; 0)</span>
+</div>
+
+<p>Equivalently, in terms of the complex harmonics — this identity fixes the
+relative signs, and it is what makes the Larmor-precession result of
+<a href="#zeeman">§9</a> exact:</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msub><mi>S</mi><mrow><mi>l</mi><mo>,</mo><mi>m</mi></mrow></msub>
+    <mo>=</mo>
+    <mfrac>
+      <mrow>
+        <msup><mrow><mo>(</mo><mo>−</mo><mn>1</mn><mo>)</mo></mrow><mi>m</mi></msup>
+        <msubsup><mi>Y</mi><mi>l</mi><mi>m</mi></msubsup>
+        <mo>+</mo>
+        <msubsup><mi>Y</mi><mi>l</mi><mrow><mo>−</mo><mi>m</mi></mrow></msubsup>
+      </mrow>
+      <msqrt><mn>2</mn></msqrt>
+    </mfrac>
+    <mo>,</mo>
+    <mspace width="1.2em"></mspace>
+    <msub><mi>S</mi><mrow><mi>l</mi><mo>,</mo><mo>−</mo><mi>m</mi></mrow></msub>
+    <mo>=</mo>
+    <mfrac>
+      <mrow>
+        <msup><mrow><mo>(</mo><mo>−</mo><mn>1</mn><mo>)</mo></mrow><mi>m</mi></msup>
+        <msubsup><mi>Y</mi><mi>l</mi><mi>m</mi></msubsup>
+        <mo>−</mo>
+        <msubsup><mi>Y</mi><mi>l</mi><mrow><mo>−</mo><mi>m</mi></mrow></msubsup>
+      </mrow>
+      <mrow><mi>i</mi><msqrt><mn>2</mn></msqrt></mrow>
+    </mfrac>
+    <mspace width="1.2em"></mspace>
+    <mtext>(m &gt; 0)</mtext>
+  </mrow>
+</math>
+<span class="formula-ascii">S_(l,m) = ((-1)^m Y_l^m + Y_l^(-m)) / sqrt(2) ,   S_(l,-m) = ((-1)^m Y_l^m - Y_l^(-m)) / (i sqrt(2))   (m &gt; 0)</span>
+</div>
+
+<p>The real harmonics for <i>l</i> ≤ 2, with their Cartesian forms and the
+orbital-key suffixes the app uses:</p>
+
+<div class="table-wrap">
+<table class="formula-table">
+<caption>Real spherical harmonics, <i>l</i> ≤ 2. Cartesian forms use <i>x</i>, <i>y</i>, <i>z</i> with <i>r</i>² = <i>x</i>² + <i>y</i>² + <i>z</i>².</caption>
+<thead><tr><th scope="col">Orbital</th><th scope="col"><i>m</i></th><th scope="col">S(θ, φ)</th><th scope="col">Cartesian</th></tr></thead>
+<tbody>
+<tr><td>s</td><td>0</td><td>
+<math><mrow><mfrac><mn>1</mn><mrow><mn>2</mn><msqrt><mi>π</mi></msqrt></mrow></mfrac></mrow></math>
+<span class="formula-ascii">1/(2 sqrt(pi))</span>
+</td><td>—</td></tr>
+<tr><td>p<sub>z</sub></td><td>0</td><td>
+<math><mrow><msqrt><mfrac><mn>3</mn><mrow><mn>4</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mi>cos</mi><mi>θ</mi></mrow></math>
+<span class="formula-ascii">sqrt(3/(4 pi)) cos theta</span>
+</td><td>
+<math><mrow><msqrt><mfrac><mn>3</mn><mrow><mn>4</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mfrac><mi>z</mi><mi>r</mi></mfrac></mrow></math>
+<span class="formula-ascii">sqrt(3/(4 pi)) z/r</span>
+</td></tr>
+<tr><td>p<sub>x</sub></td><td>+1</td><td>
+<math><mrow><msqrt><mfrac><mn>3</mn><mrow><mn>4</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mi>sin</mi><mi>θ</mi><mspace width="0.15em"></mspace><mi>cos</mi><mi>φ</mi></mrow></math>
+<span class="formula-ascii">sqrt(3/(4 pi)) sin theta cos phi</span>
+</td><td>
+<math><mrow><msqrt><mfrac><mn>3</mn><mrow><mn>4</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mfrac><mi>x</mi><mi>r</mi></mfrac></mrow></math>
+<span class="formula-ascii">sqrt(3/(4 pi)) x/r</span>
+</td></tr>
+<tr><td>p<sub>y</sub></td><td>−1</td><td>
+<math><mrow><msqrt><mfrac><mn>3</mn><mrow><mn>4</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mi>sin</mi><mi>θ</mi><mspace width="0.15em"></mspace><mi>sin</mi><mi>φ</mi></mrow></math>
+<span class="formula-ascii">sqrt(3/(4 pi)) sin theta sin phi</span>
+</td><td>
+<math><mrow><msqrt><mfrac><mn>3</mn><mrow><mn>4</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mfrac><mi>y</mi><mi>r</mi></mfrac></mrow></math>
+<span class="formula-ascii">sqrt(3/(4 pi)) y/r</span>
+</td></tr>
+<tr><td>d<sub>z²</sub></td><td>0</td><td>
+<math><mrow><msqrt><mfrac><mn>5</mn><mrow><mn>16</mn><mi>π</mi></mrow></mfrac></msqrt><mrow><mo>(</mo><mn>3</mn><msup><mi>cos</mi><mn>2</mn></msup><mi>θ</mi><mo>−</mo><mn>1</mn><mo>)</mo></mrow></mrow></math>
+<span class="formula-ascii">sqrt(5/(16 pi)) (3 cos^2 theta - 1)</span>
+</td><td>
+<math><mrow><msqrt><mfrac><mn>5</mn><mrow><mn>16</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mfrac><mrow><mn>3</mn><msup><mi>z</mi><mn>2</mn></msup><mo>−</mo><msup><mi>r</mi><mn>2</mn></msup></mrow><msup><mi>r</mi><mn>2</mn></msup></mfrac></mrow></math>
+<span class="formula-ascii">sqrt(5/(16 pi)) (3 z^2 - r^2)/r^2</span>
+</td></tr>
+<tr><td>d<sub>xz</sub></td><td>+1</td><td>
+<math><mrow><msqrt><mfrac><mn>15</mn><mrow><mn>4</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mi>sin</mi><mi>θ</mi><mspace width="0.15em"></mspace><mi>cos</mi><mi>θ</mi><mspace width="0.15em"></mspace><mi>cos</mi><mi>φ</mi></mrow></math>
+<span class="formula-ascii">sqrt(15/(4 pi)) sin theta cos theta cos phi</span>
+</td><td>
+<math><mrow><msqrt><mfrac><mn>15</mn><mrow><mn>4</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mfrac><mrow><mi>x</mi><mi>z</mi></mrow><msup><mi>r</mi><mn>2</mn></msup></mfrac></mrow></math>
+<span class="formula-ascii">sqrt(15/(4 pi)) xz/r^2</span>
+</td></tr>
+<tr><td>d<sub>yz</sub></td><td>−1</td><td>
+<math><mrow><msqrt><mfrac><mn>15</mn><mrow><mn>4</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mi>sin</mi><mi>θ</mi><mspace width="0.15em"></mspace><mi>cos</mi><mi>θ</mi><mspace width="0.15em"></mspace><mi>sin</mi><mi>φ</mi></mrow></math>
+<span class="formula-ascii">sqrt(15/(4 pi)) sin theta cos theta sin phi</span>
+</td><td>
+<math><mrow><msqrt><mfrac><mn>15</mn><mrow><mn>4</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mfrac><mrow><mi>y</mi><mi>z</mi></mrow><msup><mi>r</mi><mn>2</mn></msup></mfrac></mrow></math>
+<span class="formula-ascii">sqrt(15/(4 pi)) yz/r^2</span>
+</td></tr>
+<tr><td>d<sub>x²−y²</sub></td><td>+2</td><td>
+<math><mrow><msqrt><mfrac><mn>15</mn><mrow><mn>16</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><msup><mi>sin</mi><mn>2</mn></msup><mi>θ</mi><mspace width="0.15em"></mspace><mi>cos</mi><mrow><mn>2</mn><mi>φ</mi></mrow></mrow></math>
+<span class="formula-ascii">sqrt(15/(16 pi)) sin^2 theta cos(2 phi)</span>
+</td><td>
+<math><mrow><msqrt><mfrac><mn>15</mn><mrow><mn>16</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mfrac><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><msup><mi>y</mi><mn>2</mn></msup></mrow><msup><mi>r</mi><mn>2</mn></msup></mfrac></mrow></math>
+<span class="formula-ascii">sqrt(15/(16 pi)) (x^2 - y^2)/r^2</span>
+</td></tr>
+<tr><td>d<sub>xy</sub></td><td>−2</td><td>
+<math><mrow><msqrt><mfrac><mn>15</mn><mrow><mn>16</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><msup><mi>sin</mi><mn>2</mn></msup><mi>θ</mi><mspace width="0.15em"></mspace><mi>sin</mi><mrow><mn>2</mn><mi>φ</mi></mrow></mrow></math>
+<span class="formula-ascii">sqrt(15/(16 pi)) sin^2 theta sin(2 phi)</span>
+</td><td>
+<math><mrow><msqrt><mfrac><mn>15</mn><mrow><mn>4</mn><mi>π</mi></mrow></mfrac></msqrt><mspace width="0.15em"></mspace><mfrac><mrow><mi>x</mi><mi>y</mi></mrow><msup><mi>r</mi><mn>2</mn></msup></mfrac></mrow></math>
+<span class="formula-ascii">sqrt(15/(4 pi)) xy/r^2</span>
+</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>The app's canonical orbital keys map <i>m</i> to suffixes as follows.
+p: <i>m</i> = +1 → <code>x</code>, −1 → <code>y</code>, 0 → <code>z</code>.
+d: 0 → <code>z2</code>, +1 → <code>xz</code>, −1 → <code>yz</code>,
++2 → <code>x2y2</code>, −2 → <code>xy</code>.
+f: 0 → <code>z3</code>, +1 → <code>xz2</code>, −1 → <code>yz2</code>,
++2 → <code>zx2y2</code>, −2 → <code>xyz</code>, +3 → <code>xx23y2</code>
+(f<sub>x(x²−3y²)</sub>), −3 → <code>y3x2y2</code>
+(f<sub>y(3x²−y²)</sub>). So <code>3d_z2</code> is
+3d<sub>z²</sub> and <code>4f_xyz</code> is 4f<sub>xyz</sub>.</p>
+
+<p><strong>Real vs. complex display.</strong> The orbital chips always select
+real orbitals. A real orbital is a stationary state here, so its density is
+time-independent; only its global phase evolves, as
+arg ψ(<i>t</i>) = −(<i>E</i>/ℏ)<i>t</i>. When the app's color mode is
+<em>phase</em> and |<i>m</i>| &gt; 0, the view switches to the complex
+partner <i>e<sup>imφ</sup></i> whose phase pattern visibly circulates:
+arg ψ(<i>t</i>) = <i>m</i>φ − (<i>E</i>/ℏ)<i>t</i>. Real physical periods
+are of order 10<sup>−16</sup>&nbsp;s; the animation applies a display
+time-scale factor, which the app reports.</p>
+</section>
+
+<section id="radial">
+<h2>6. Radial solutions: generalized Laguerre polynomials</h2>
+
+<p>The code uses the <em>modern</em> generalized-Laguerre convention
+(Abramowitz &amp; Stegun; later editions of Griffiths):</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msubsup><mi>L</mi><mi>k</mi><mrow><mo>(</mo><mi>α</mi><mo>)</mo></mrow></msubsup>
+    <mo>(</mo><mi>x</mi><mo>)</mo>
+    <mo>=</mo>
+    <munderover><mo>Σ</mo><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><mi>k</mi></munderover>
+    <msup><mrow><mo>(</mo><mo>−</mo><mn>1</mn><mo>)</mo></mrow><mi>i</mi></msup>
+    <mrow>
+      <mo>(</mo>
+      <mfrac linethickness="0"><mrow><mi>k</mi><mo>+</mo><mi>α</mi></mrow><mrow><mi>k</mi><mo>−</mo><mi>i</mi></mrow></mfrac>
+      <mo>)</mo>
+    </mrow>
+    <mfrac><msup><mi>x</mi><mi>i</mi></msup><mrow><mi>i</mi><mo>!</mo></mrow></mfrac>
+  </mrow>
+</math>
+<span class="formula-ascii">L_k^(alpha)(x) = sum_(i=0)^k (-1)^i binom(k+alpha, k-i) x^i / i!</span>
+</div>
+
+<p><strong>Convention warning:</strong> older quantum-chemistry texts use an
+associated-Laguerre definition that differs by a factor of
+[(<i>k</i>+α)!] and an index shift; formulas mixed between conventions
+produce wrongly normalized orbitals. Everything below (and in the code) is
+consistent with the definition above, and the normalization is confirmed
+numerically by the <code>radial-norm</code> checks.</p>
+
+<p>With the scaled radius</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mi>ρ</mi><mo>=</mo>
+    <mfrac><mrow><mn>2</mn><mi>Z</mi><mi>r</mi></mrow><mi>n</mi></mfrac>
+    <mspace width="1.2em"></mspace>
+    <mtext>(r in units of a₀)</mtext>
+  </mrow>
+</math>
+<span class="formula-ascii">rho = 2 Z r / n   (r in units of a0)</span>
+</div>
+
+<p>the normalized radial function is</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msub><mi>R</mi><mrow><mi>n</mi><mi>l</mi></mrow></msub><mo>(</mo><mi>r</mi><mo>)</mo>
+    <mo>=</mo>
+    <msub><mi>N</mi><mrow><mi>n</mi><mi>l</mi></mrow></msub>
+    <mspace width="0.15em"></mspace>
+    <msup><mi>e</mi><mrow><mo>−</mo><mi>ρ</mi><mo>/</mo><mn>2</mn></mrow></msup>
+    <mspace width="0.15em"></mspace>
+    <msup><mi>ρ</mi><mi>l</mi></msup>
+    <mspace width="0.15em"></mspace>
+    <msubsup><mi>L</mi><mrow><mi>n</mi><mo>−</mo><mi>l</mi><mo>−</mo><mn>1</mn></mrow><mrow><mo>(</mo><mn>2</mn><mi>l</mi><mo>+</mo><mn>1</mn><mo>)</mo></mrow></msubsup>
+    <mo>(</mo><mi>ρ</mi><mo>)</mo>
+  </mrow>
+</math>
+<span class="formula-ascii">R_nl(r) = N_nl e^(-rho/2) rho^l L_(n-l-1)^(2l+1)(rho)</span>
+<math display="block">
+  <mrow>
+    <msub><mi>N</mi><mrow><mi>n</mi><mi>l</mi></mrow></msub>
+    <mo>=</mo>
+    <msqrt><mrow>
+      <msup><mrow><mo>(</mo><mfrac><mrow><mn>2</mn><mi>Z</mi></mrow><mi>n</mi></mfrac><mo>)</mo></mrow><mn>3</mn></msup>
+      <mfrac>
+        <mrow><mo>(</mo><mi>n</mi><mo>−</mo><mi>l</mi><mo>−</mo><mn>1</mn><mo>)</mo><mo>!</mo></mrow>
+        <mrow><mn>2</mn><mi>n</mi><mspace width="0.15em"></mspace><mo>(</mo><mi>n</mi><mo>+</mo><mi>l</mi><mo>)</mo><mo>!</mo></mrow>
+      </mfrac>
+    </mrow></msqrt>
+  </mrow>
+</math>
+<span class="formula-ascii">N_nl = sqrt( (2Z/n)^3 (n-l-1)! / (2n (n+l)!) )</span>
+</div>
+
+<p>The Laguerre factor is a degree-(<i>n</i>−<i>l</i>−1) polynomial, giving
+exactly <i>n</i>−<i>l</i>−1 radial nodes. The code generates the polynomial
+coefficients as exact BigInt rationals and evaluates by Horner's rule; an
+independent three-term recurrence cross-checks every value
+(<code>laguerre-xcheck</code>).</p>
+
+<p>The closed forms for <i>n</i> ≤ 3, exactly as implemented (these rows are
+what the <code>theory-anchors</code> verify group compares against the
+generated coefficients):</p>
+
+<div class="table-wrap">
+<table class="formula-table">
+<caption>Radial functions for <i>n</i> ≤ 3. <i>Z</i> ≡ <i>Z</i><sub>eff</sub>, <i>r</i> in units of <i>a</i><sub>0</sub>, R in units of <i>a</i><sub>0</sub><sup>−3/2</sup>.</caption>
+<thead><tr><th scope="col">Orbital</th><th scope="col">R<sub>nl</sub>(r)</th></tr></thead>
+<tbody>
+<tr><td>1s</td><td>
+<math><mrow><msub><mi>R</mi><mn>10</mn></msub><mo>=</mo><mn>2</mn><msup><mi>Z</mi><mrow><mn>3</mn><mo>/</mo><mn>2</mn></mrow></msup><msup><mi>e</mi><mrow><mo>−</mo><mi>Z</mi><mi>r</mi></mrow></msup></mrow></math>
+<span class="formula-ascii">R_10 = 2 Z^(3/2) e^(-Z r)</span>
+</td></tr>
+<tr><td>2s</td><td>
+<math><mrow><msub><mi>R</mi><mn>20</mn></msub><mo>=</mo><mfrac><msup><mi>Z</mi><mrow><mn>3</mn><mo>/</mo><mn>2</mn></mrow></msup><mrow><mn>2</mn><msqrt><mn>2</mn></msqrt></mrow></mfrac><mrow><mo>(</mo><mn>2</mn><mo>−</mo><mi>Z</mi><mi>r</mi><mo>)</mo></mrow><msup><mi>e</mi><mrow><mo>−</mo><mi>Z</mi><mi>r</mi><mo>/</mo><mn>2</mn></mrow></msup></mrow></math>
+<span class="formula-ascii">R_20 = (Z^(3/2)/(2 sqrt(2))) (2 - Z r) e^(-Z r/2)</span>
+</td></tr>
+<tr><td>2p</td><td>
+<math><mrow><msub><mi>R</mi><mn>21</mn></msub><mo>=</mo><mfrac><msup><mi>Z</mi><mrow><mn>3</mn><mo>/</mo><mn>2</mn></mrow></msup><mrow><mn>2</mn><msqrt><mn>6</mn></msqrt></mrow></mfrac><mspace width="0.15em"></mspace><mi>Z</mi><mi>r</mi><mspace width="0.15em"></mspace><msup><mi>e</mi><mrow><mo>−</mo><mi>Z</mi><mi>r</mi><mo>/</mo><mn>2</mn></mrow></msup></mrow></math>
+<span class="formula-ascii">R_21 = (Z^(3/2)/(2 sqrt(6))) Z r e^(-Z r/2)</span>
+</td></tr>
+<tr><td>3s</td><td>
+<math><mrow><msub><mi>R</mi><mn>30</mn></msub><mo>=</mo><mfrac><mrow><mn>2</mn><msup><mi>Z</mi><mrow><mn>3</mn><mo>/</mo><mn>2</mn></mrow></msup></mrow><mrow><mn>81</mn><msqrt><mn>3</mn></msqrt></mrow></mfrac><mrow><mo>(</mo><mn>27</mn><mo>−</mo><mn>18</mn><mi>Z</mi><mi>r</mi><mo>+</mo><mn>2</mn><msup><mi>Z</mi><mn>2</mn></msup><msup><mi>r</mi><mn>2</mn></msup><mo>)</mo></mrow><msup><mi>e</mi><mrow><mo>−</mo><mi>Z</mi><mi>r</mi><mo>/</mo><mn>3</mn></mrow></msup></mrow></math>
+<span class="formula-ascii">R_30 = (2 Z^(3/2)/(81 sqrt(3))) (27 - 18 Z r + 2 Z^2 r^2) e^(-Z r/3)</span>
+</td></tr>
+<tr><td>3p</td><td>
+<math><mrow><msub><mi>R</mi><mn>31</mn></msub><mo>=</mo><mfrac><mrow><mn>4</mn><msup><mi>Z</mi><mrow><mn>3</mn><mo>/</mo><mn>2</mn></mrow></msup></mrow><mrow><mn>81</mn><msqrt><mn>6</mn></msqrt></mrow></mfrac><mspace width="0.15em"></mspace><mi>Z</mi><mi>r</mi><mspace width="0.15em"></mspace><mrow><mo>(</mo><mn>6</mn><mo>−</mo><mi>Z</mi><mi>r</mi><mo>)</mo></mrow><msup><mi>e</mi><mrow><mo>−</mo><mi>Z</mi><mi>r</mi><mo>/</mo><mn>3</mn></mrow></msup></mrow></math>
+<span class="formula-ascii">R_31 = (4 Z^(3/2)/(81 sqrt(6))) Z r (6 - Z r) e^(-Z r/3)</span>
+</td></tr>
+<tr><td>3d</td><td>
+<math><mrow><msub><mi>R</mi><mn>32</mn></msub><mo>=</mo><mfrac><mrow><mn>4</mn><msup><mi>Z</mi><mrow><mn>3</mn><mo>/</mo><mn>2</mn></mrow></msup></mrow><mrow><mn>81</mn><msqrt><mn>30</mn></msqrt></mrow></mfrac><mspace width="0.15em"></mspace><msup><mi>Z</mi><mn>2</mn></msup><msup><mi>r</mi><mn>2</mn></msup><mspace width="0.15em"></mspace><msup><mi>e</mi><mrow><mo>−</mo><mi>Z</mi><mi>r</mi><mo>/</mo><mn>3</mn></mrow></msup></mrow></math>
+<span class="formula-ascii">R_32 = (4 Z^(3/2)/(81 sqrt(30))) Z^2 r^2 e^(-Z r/3)</span>
+</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>Setting <i>Z</i> = 1, <i>n</i> = 1 recovers the hydrogen ground state
+ψ<sub>100</sub> = (1/√π) e<sup>−r</sup>, the product of R<sub>10</sub> above
+with Y<sub>0</sub><sup>0</sup> = 1/(2√π).</p>
+</section>
+
+<section id="energies">
+<h2>7. Energies and expectation values</h2>
+
+<p>The hydrogenic energy depends only on <i>n</i>:</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msub><mi>E</mi><mi>n</mi></msub>
+    <mo>=</mo>
+    <mo>−</mo>
+    <mfrac><msup><mi>Z</mi><mn>2</mn></msup><mrow><mn>2</mn><msup><mi>n</mi><mn>2</mn></msup></mrow></mfrac>
+    <mspace width="0.4em"></mspace><mtext>hartree</mtext>
+    <mo>=</mo>
+    <mo>−</mo><mn>13.605693</mn>
+    <mspace width="0.3em"></mspace>
+    <mfrac><msup><mi>Z</mi><mn>2</mn></msup><msup><mi>n</mi><mn>2</mn></msup></mfrac>
+    <mspace width="0.4em"></mspace><mtext>eV</mtext>
+  </mrow>
+</math>
+<span class="formula-ascii">E_n = -Z^2/(2 n^2) hartree = -13.605693 Z^2/n^2 eV</span>
+</div>
+
+<p>Useful closed forms, all implemented and all verified against numerical
+quadrature (<i>r</i> in <i>a</i><sub>0</sub>, <i>Z</i> = <i>Z</i><sub>eff</sub>):</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mrow><mo>⟨</mo><mi>r</mi><mo>⟩</mo></mrow>
+    <mo>=</mo>
+    <mfrac>
+      <mrow><mn>3</mn><msup><mi>n</mi><mn>2</mn></msup><mo>−</mo><mi>l</mi><mo>(</mo><mi>l</mi><mo>+</mo><mn>1</mn><mo>)</mo></mrow>
+      <mrow><mn>2</mn><mi>Z</mi></mrow>
+    </mfrac>
+  </mrow>
+</math>
+<span class="formula-ascii">&lt;r&gt; = (3 n^2 - l(l+1)) / (2 Z)</span>
+<math display="block">
+  <mrow>
+    <mrow><mo>⟨</mo><msup><mi>r</mi><mn>2</mn></msup><mo>⟩</mo></mrow>
+    <mo>=</mo>
+    <mfrac>
+      <mrow><msup><mi>n</mi><mn>2</mn></msup><mrow><mo>(</mo><mn>5</mn><msup><mi>n</mi><mn>2</mn></msup><mo>+</mo><mn>1</mn><mo>−</mo><mn>3</mn><mi>l</mi><mo>(</mo><mi>l</mi><mo>+</mo><mn>1</mn><mo>)</mo><mo>)</mo></mrow></mrow>
+      <mrow><mn>2</mn><msup><mi>Z</mi><mn>2</mn></msup></mrow>
+    </mfrac>
+    <mo>,</mo>
+    <mspace width="1.2em"></mspace>
+    <mrow><mo>⟨</mo><msup><mi>r</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>⟩</mo></mrow>
+    <mo>=</mo>
+    <mfrac><mi>Z</mi><msup><mi>n</mi><mn>2</mn></msup></mfrac>
+  </mrow>
+</math>
+<span class="formula-ascii">&lt;r^2&gt; = n^2 (5 n^2 + 1 - 3 l(l+1)) / (2 Z^2) ,   &lt;1/r&gt; = Z/n^2</span>
+</div>
+
+<p>For the node-less orbitals <i>l</i> = <i>n</i>−1 (1s, 2p, 3d, 4f) the
+most probable radius — the peak of the radial density
+P(<i>r</i>) = <i>r</i>²R² — has the exact value</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msub><mi>r</mi><mtext>mp</mtext></msub>
+    <mo>=</mo>
+    <mfrac><msup><mi>n</mi><mn>2</mn></msup><mi>Z</mi></mfrac>
+    <mspace width="1.2em"></mspace>
+    <mtext>(l = n−1)</mtext>
+  </mrow>
+</math>
+<span class="formula-ascii">r_mp = n^2/Z   (l = n-1)</span>
+</div>
+
+<p>used as a verification anchor for the general numerical peak-finder. Node
+counts: <i>n</i>−<i>l</i>−1 radial nodes (spheres) and <i>l</i> angular
+nodes; for a real orbital the angular nodes split into |<i>m</i>| planes and
+<i>l</i>−|<i>m</i>| cones. The info panel reports all of these for the
+selected orbital.</p>
+</section>
+
+<section id="slater">
+<h2>8. Slater screening: Z<sub>eff</sub> for many-electron atoms</h2>
+
+<p>For a many-electron atom the app draws the valence orbital as a
+hydrogenic function with effective charge
+<i>Z</i><sub>eff</sub> = <i>Z</i> − <i>s</i>, where the screening constant
+<i>s</i> follows Slater's 1930 rules
+[<a href="#references">3</a>]. Electrons are grouped in the fixed order</p>
+
+<p style="text-align:center"><code>1s | 2s,2p | 3s,3p | 3d | 4s,4p | 4d | 4f | 5s,5p | 5d | 5f | 6s,6p | 6d | 7s,7p</code></p>
+
+<p>and each other electron contributes to <i>s</i>:</p>
+
+<ul>
+  <li>For an electron in an <i>n</i>s,<i>n</i>p group: 0.35 per other
+  electron in the same group (0.30 if the group is 1s); 0.85 per electron
+  with principal quantum number <i>n</i>−1; 1.00 per electron in
+  <i>n</i>−2 or deeper shells.</li>
+  <li>For an electron in an <i>n</i>d or <i>n</i>f group: 0.35 per other
+  electron in the same group; 1.00 per electron in <em>every</em> earlier
+  group — including the same-<i>n</i> s,p electrons.</li>
+</ul>
+
+<p>All constants are exact multiples of 1/20, so the code carries
+<i>Z</i><sub>eff</sub> as an exact rational. Slater pairs the screening rule
+with an effective quantum number <i>n</i>*:</p>
+
+<div class="table-wrap">
+<table class="data-table">
+<caption>Slater's effective principal quantum number. <i>n</i>* for <i>n</i> = 7 is extrapolated (flagged in the code).</caption>
+<thead><tr><th scope="col"><i>n</i></th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th><th scope="col">6</th><th scope="col">7</th></tr></thead>
+<tbody><tr><th scope="row"><i>n</i>*</th><td class="num">1</td><td class="num">2</td><td class="num">3</td><td class="num">3.7</td><td class="num">4.0</td><td class="num">4.2</td><td class="num">4.3</td></tr></tbody>
+</table>
+</div>
+
+<p>The app reports two energy estimates per orbital, clearly labeled:</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msub><mi>E</mi><mtext>Slater</mtext></msub>
+    <mo>=</mo>
+    <mo>−</mo><mn>13.605693</mn>
+    <msup>
+      <mrow><mo>(</mo><mfrac><msub><mi>Z</mi><mtext>eff</mtext></msub><msup><mi>n</mi><mo>*</mo></msup></mfrac><mo>)</mo></mrow>
+      <mn>2</mn>
+    </msup>
+    <mspace width="0.4em"></mspace><mtext>eV</mtext>
+    <mo>,</mo>
+    <mspace width="1.2em"></mspace>
+    <msub><mi>E</mi><mtext>hyd</mtext></msub>
+    <mo>=</mo>
+    <mo>−</mo><mn>13.605693</mn>
+    <mfrac><msubsup><mi>Z</mi><mtext>eff</mtext><mn>2</mn></msubsup><msup><mi>n</mi><mn>2</mn></msup></mfrac>
+    <mspace width="0.4em"></mspace><mtext>eV</mtext>
+  </mrow>
+</math>
+<span class="formula-ascii">E_Slater = -13.605693 (Z_eff/n*)^2 eV ,   E_hyd = -13.605693 Z_eff^2/n^2 eV</span>
+</div>
+
+<p>The hydrogenic one uses integer <i>n</i> and matches the wavefunction
+actually drawn; the Slater one is his original energy estimate with
+<i>n</i>*.</p>
+
+<h3>Worked example: iron (Z = 26, [Ar] 3d⁶ 4s²)</h3>
+
+<p>Grouped configuration:
+(1s)² (2s,2p)⁸ (3s,3p)⁸ (3d)⁶ (4s,4p)².</p>
+
+<p>For a <strong>3d</strong> electron (d-group rule — everything below 3d
+counts 1.00):</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mi>s</mi><mo>=</mo>
+    <mn>5</mn><mo>(</mo><mn>0.35</mn><mo>)</mo>
+    <mo>+</mo>
+    <mn>18</mn><mo>(</mo><mn>1.00</mn><mo>)</mo>
+    <mo>=</mo><mn>19.75</mn>
+    <mspace width="0.8em"></mspace><mo>⇒</mo><mspace width="0.8em"></mspace>
+    <msub><mi>Z</mi><mtext>eff</mtext></msub>
+    <mo>=</mo><mn>26</mn><mo>−</mo><mn>19.75</mn><mo>=</mo><mn>6.25</mn>
+  </mrow>
+</math>
+<span class="formula-ascii">s = 5(0.35) + 18(1.00) = 19.75  =&gt;  Z_eff = 26 - 19.75 = 6.25</span>
+</div>
+
+<p>For a <strong>4s</strong> electron (s,p-group rule — one 4s partner at
+0.35, the fourteen <i>n</i> = 3 electrons at 0.85, the ten
+<i>n</i> ≤ 2 electrons at 1.00):</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mi>s</mi><mo>=</mo>
+    <mn>1</mn><mo>(</mo><mn>0.35</mn><mo>)</mo>
+    <mo>+</mo>
+    <mn>14</mn><mo>(</mo><mn>0.85</mn><mo>)</mo>
+    <mo>+</mo>
+    <mn>10</mn><mo>(</mo><mn>1.00</mn><mo>)</mo>
+    <mo>=</mo><mn>22.25</mn>
+    <mspace width="0.8em"></mspace><mo>⇒</mo><mspace width="0.8em"></mspace>
+    <msub><mi>Z</mi><mtext>eff</mtext></msub>
+    <mo>=</mo><mn>26</mn><mo>−</mo><mn>22.25</mn><mo>=</mo><mn>3.75</mn>
+  </mrow>
+</math>
+<span class="formula-ascii">s = 1(0.35) + 14(0.85) + 10(1.00) = 22.25  =&gt;  Z_eff = 26 - 22.25 = 3.75</span>
+</div>
+
+<p>So Fe 3d is computed with <i>Z</i><sub>eff</sub> = 6.25
+(E<sub>hyd</sub> = −13.605693 · 6.25²/9 ≈ −59.05&nbsp;eV,
+⟨r⟩ = 21/12.5 = 1.68&nbsp;a₀ ≈ 88.9&nbsp;pm) and Fe 4s with
+<i>Z</i><sub>eff</sub> = 3.75
+(E<sub>hyd</sub> ≈ −11.96&nbsp;eV, E<sub>Slater</sub> with
+<i>n</i>* = 3.7 ≈ −13.98&nbsp;eV). These exact rationals are asserted by the
+<code>slater-regression</code> verify check.</p>
+
+<h3>Honest limitations</h3>
+
+<ul>
+  <li><strong>No <i>l</i>-dependence within an s,p group.</strong> Slater's
+  rules give identical <i>Z</i><sub>eff</sub> for <i>n</i>s and <i>n</i>p —
+  wrong in detail (real s electrons penetrate more and are bound more
+  tightly).</li>
+  <li><strong>Valence s underestimated.</strong> Compared to the
+  SCF-derived screening constants of Clementi &amp; Raimondi
+  [<a href="#references">4</a>], Slater's <i>Z</i><sub>eff</sub> for 4s and
+  heavier valence s orbitals is badly low — K&nbsp;4s: Slater 2.20 vs.
+  Clementi 3.50. The <code>slater-vs-clementi</code> check reports these
+  deviations as informational rows rather than hiding them.</li>
+  <li><strong>No relativity.</strong> Increasingly wrong past
+  <i>Z</i> ≈ 70 (this is why gold is gold-colored and mercury is liquid —
+  effects entirely absent here). Superheavy elements are decorative, and
+  their configurations (Z ≥ 104) are themselves predictions, flagged in the
+  app.</li>
+  <li><strong>Subshells are not mutually orthogonal.</strong> Because each
+  subshell gets its own <i>Z</i><sub>eff</sub>, same-element orbitals from
+  different subshells (e.g. Fe 3d with <i>Z</i> = 6.25 and Fe 4s with
+  <i>Z</i> = 3.75) are <em>not</em> orthogonal, unlike true eigenstates of
+  one Hamiltonian. The <code>subshell-nonortho</code> check measures and
+  reports this overlap rather than pretending it vanishes.</li>
+</ul>
+</section>
+
+<section id="zeeman">
+<h2>9. Magnetic field: Zeeman shifts, Larmor precession, squeeze</h2>
+
+<div class="spec-banner"><strong>SPECULATIVE</strong> First-order orbital
+Zeeman model only: electron spin, spin–orbit coupling, and the true
+quadratic Zeeman eigenstates are all omitted. The squeeze factor below is an
+interpolating heuristic, not a solution of the strong-field problem.</div>
+
+<p>With the field <b>B</b> along +<i>z</i>, the orbital Zeeman term
+(μ<sub>B</sub>/ℏ) B L<sub>z</sub> is diagonal in the complex basis, giving
+the linear shift</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mi>Δ</mi><msub><mi>E</mi><mi>m</mi></msub>
+    <mo>=</mo>
+    <msub><mi>μ</mi><mi>B</mi></msub>
+    <mspace width="0.15em"></mspace><mi>B</mi><mspace width="0.15em"></mspace><mi>m</mi>
+    <mo>,</mo>
+    <mspace width="1.2em"></mspace>
+    <msub><mi>μ</mi><mi>B</mi></msub>
+    <mo>=</mo>
+    <mn>5.788382</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>5</mn></mrow></msup>
+    <mspace width="0.3em"></mspace><mtext>eV/T</mtext>
+  </mrow>
+</math>
+<span class="formula-ascii">Delta E_m = mu_B B m ,   mu_B = 5.788382e-5 eV/T</span>
+</div>
+
+<p>The 2<i>l</i>+1 levels of a subshell split symmetrically —
+Σ<sub><i>m</i></sub> ΔE<sub><i>m</i></sub> = 0, asserted by the
+<code>zeeman-sym</code> check. The associated Larmor frequency is</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msub><mi>ω</mi><mi>L</mi></msub>
+    <mo>=</mo>
+    <mfrac><mrow><msub><mi>μ</mi><mi>B</mi></msub><mspace width="0.1em"></mspace><mi>B</mi></mrow><mi>ℏ</mi></mfrac>
+    <mo>≈</mo>
+    <mn>8.794</mn><mo>×</mo><msup><mn>10</mn><mn>10</mn></msup>
+    <mspace width="0.3em"></mspace><mi>B</mi>
+    <mspace width="0.3em"></mspace><mtext>rad/s (B in tesla)</mtext>
+  </mrow>
+</math>
+<span class="formula-ascii">omega_L = mu_B B / hbar ~= 8.794e10 * B rad/s  (B in tesla)</span>
+</div>
+
+<p><strong>Precession of real orbitals (exact within the linear model).</strong>
+A real orbital with |<i>m</i>| = μ &gt; 0 is a fixed combination of
+Y<sub>l</sub><sup>+μ</sup> and Y<sub>l</sub><sup>−μ</sup>
+(<a href="#real-orbitals">§5</a>). Under the field the two components
+acquire opposite phases e<sup>∓iμω<sub>L</sub>t</sup> beyond the common
+e<sup>−iEt/ℏ</sup>, and the combination reassembles <em>exactly</em>
+into</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mi>ψ</mi><mo>(</mo><mi>t</mi><mo>)</mo>
+    <mo>∝</mo>
+    <msub><mi>R</mi><mrow><mi>n</mi><mi>l</mi></mrow></msub><mo>(</mo><mi>r</mi><mo>)</mo>
+    <mspace width="0.15em"></mspace>
+    <msub><mi>N</mi><mrow><mi>l</mi><mi>μ</mi></mrow></msub>
+    <msubsup><mi>P</mi><mi>l</mi><mi>μ</mi></msubsup>
+    <mo>(</mo><mi>cos</mi><mi>θ</mi><mo>)</mo>
+    <mspace width="0.15em"></mspace>
+    <mi>cos</mi>
+    <mrow>
+      <mo>(</mo>
+      <mi>μ</mi>
+      <mrow><mo>(</mo><mi>φ</mi><mo>−</mo><msub><mi>ω</mi><mi>L</mi></msub><mi>t</mi><mo>)</mo></mrow>
+      <mo>)</mo>
+    </mrow>
+  </mrow>
+</math>
+<span class="formula-ascii">psi(t) ∝ R_nl(r) N_l,mu P_l^mu(cos theta) cos( mu (phi - omega_L t) )</span>
+</div>
+
+<p>(cos-type shown; sin-type is analogous): the density pattern rotates
+<em>rigidly</em> about <i>z</i> at ω<sub>L</sub>, independent of μ. Orbitals
+with <i>m</i> = 0 neither shift nor precess. Real rates are fast — at
+10&nbsp;T one revolution takes about 7.1&nbsp;ps — so the app applies a
+display speedup factor and says so.</p>
+
+<p><strong>Strong-field squeeze (heuristic).</strong> The neglected
+diamagnetic term (e²B²/8m<sub>e</sub>)(x²+y²) compresses the orbital
+perpendicular to the field. Defining the cyclotron-to-binding ratio</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mi>γ</mi>
+    <mo>=</mo>
+    <mfrac>
+      <mrow><msub><mi>μ</mi><mi>B</mi></msub><mspace width="0.1em"></mspace><mi>B</mi></mrow>
+      <mrow><mo>|</mo><msub><mi>E</mi><mrow><mi>n</mi><mi>l</mi></mrow></msub><mo>|</mo></mrow>
+    </mfrac>
+    <mo>,</mo>
+    <mspace width="1.2em"></mspace>
+    <msub><mi>s</mi><mo>⊥</mo></msub>
+    <mo>=</mo>
+    <msup>
+      <mrow><mo>(</mo><mn>1</mn><mo>+</mo><msup><mi>γ</mi><mn>2</mn></msup><mo>)</mo></mrow>
+      <mrow><mo>−</mo><mn>1</mn><mo>/</mo><mn>4</mn></mrow>
+    </msup>
+  </mrow>
+</math>
+<span class="formula-ascii">gamma = mu_B B / |E_nl| ,   s_perp = (1 + gamma^2)^(-1/4)</span>
+</div>
+
+<p>the drawn orbital is squeezed norm-preservingly in the transverse
+directions:</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msub><mi>ψ</mi><mi>B</mi></msub>
+    <mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>,</mo><mi>z</mi><mo>)</mo>
+    <mo>=</mo>
+    <mfrac><mn>1</mn><msub><mi>s</mi><mo>⊥</mo></msub></mfrac>
+    <mspace width="0.15em"></mspace>
+    <mi>ψ</mi>
+    <mrow>
+      <mo>(</mo>
+      <mfrac><mi>x</mi><msub><mi>s</mi><mo>⊥</mo></msub></mfrac><mo>,</mo>
+      <mfrac><mi>y</mi><msub><mi>s</mi><mo>⊥</mo></msub></mfrac><mo>,</mo>
+      <mi>z</mi>
+      <mo>)</mo>
+    </mrow>
+  </mrow>
+</math>
+<span class="formula-ascii">psi_B(x, y, z) = (1/s_perp) psi(x/s_perp, y/s_perp, z)</span>
+</div>
+
+<p><strong>Validity, honestly.</strong> The formula is exact in both limits:
+s<sub>⊥</sub> → 1 as B → 0, and s<sub>⊥</sub> ∝ B<sup>−1/2</sup> — the
+magnetic-length scaling √(ℏ/eB) — in the Landau regime. In between it is
+only an interpolation (<code>squeeze-limit-b0</code> and
+<code>squeeze-limit-binf</code> check both ends).
+Reaching γ ≈ 1 requires B ~ 10⁴–10⁵&nbsp;T: white-dwarf and neutron-star
+territory, far beyond any laboratory field. And the true strong-field
+eigenstate is a field-elongated "cigar", which this transverse squeeze only
+qualitatively imitates. That is why this whole section — and the app's field
+panel — carries the SPECULATIVE label.</p>
+</section>
+
+<section id="lcao">
+<h2>10. Two-center LCAO: bonding, antibonding, hybrids</h2>
+
+<div class="spec-banner"><strong>SPECULATIVE</strong> Frozen-atomic-orbital
+LCAO with no self-consistency; energies are Wolfsberg–Helmholz estimates.
+Shapes are meaningful; numbers are indicative.</div>
+
+<p>The companion mode places nucleus A at (0, 0, −R/2) and B at
+(0, 0, +R/2) (R in <i>a</i><sub>0</sub>, user-adjustable 0.5–10). Each atom
+contributes a valence orbital with its own Slater <i>Z</i><sub>eff</sub> and
+on-site energy α = E<sub>Slater</sub>. The molecular orbital is the linear
+combination c<sub>A</sub>φ<sub>A</sub> + c<sub>B</sub>φ<sub>B</sub> with the
+<em>signed</em> overlap integral</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mi>S</mi>
+    <mo>=</mo>
+    <mo>∫</mo>
+    <msub><mi>φ</mi><mi>A</mi></msub>
+    <mspace width="0.1em"></mspace>
+    <msub><mi>φ</mi><mi>B</mi></msub>
+    <mspace width="0.2em"></mspace>
+    <msup><mi>d</mi><mn>3</mn></msup><mi>r</mi>
+  </mrow>
+</math>
+<span class="formula-ascii">S = integral phi_A phi_B d^3r</span>
+</div>
+
+<p>evaluated in cylindrical coordinates (the azimuthal factor is analytic; the
+model evaluates σ pairs, <i>m</i><sub>A</sub> = <i>m</i><sub>B</sub> = 0, and π
+pairs, |<i>m</i>| = 1 of the same real type; pairs of differing |<i>m</i>| or
+mixed cos/sin type vanish by symmetry, while δ-type pairs (|<i>m</i>| = 2, same
+real type) have nonzero overlap on-axis but are treated as nonbonding here — a
+documented simplification).
+The off-diagonal element uses the Wolfsberg–Helmholz prescription
+[<a href="#references">5</a>] with the conventional k = 1.75:</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mi>β</mi>
+    <mo>=</mo>
+    <mn>1.75</mn>
+    <mspace width="0.15em"></mspace><mi>S</mi><mspace width="0.15em"></mspace>
+    <mfrac>
+      <mrow><msub><mi>α</mi><mi>A</mi></msub><mo>+</mo><msub><mi>α</mi><mi>B</mi></msub></mrow>
+      <mn>2</mn>
+    </mfrac>
+  </mrow>
+</math>
+<span class="formula-ascii">beta = 1.75 S (alpha_A + alpha_B)/2</span>
+</div>
+
+<p>Energies come from the 2×2 secular problem with overlap:</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mo>det</mo>
+    <mrow>
+      <mo>[</mo>
+      <mtable>
+        <mtr>
+          <mtd><mrow><msub><mi>α</mi><mi>A</mi></msub><mo>−</mo><mi>E</mi></mrow></mtd>
+          <mtd><mrow><mi>β</mi><mo>−</mo><mi>E</mi><mi>S</mi></mrow></mtd>
+        </mtr>
+        <mtr>
+          <mtd><mrow><mi>β</mi><mo>−</mo><mi>E</mi><mi>S</mi></mrow></mtd>
+          <mtd><mrow><msub><mi>α</mi><mi>B</mi></msub><mo>−</mo><mi>E</mi></mrow></mtd>
+        </mtr>
+      </mtable>
+      <mo>]</mo>
+    </mrow>
+    <mo>=</mo><mn>0</mn>
+  </mrow>
+</math>
+<span class="formula-ascii">det [ [alpha_A - E, beta - E S], [beta - E S, alpha_B - E] ] = 0</span>
+</div>
+
+<p>a quadratic in E whose lower root E<sub>−</sub> is the bonding MO and
+upper root E<sub>+</sub> the antibonding MO. For each root the coefficient
+ratio and normalization are</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <mfrac><msub><mi>c</mi><mi>B</mi></msub><msub><mi>c</mi><mi>A</mi></msub></mfrac>
+    <mo>=</mo>
+    <mo>−</mo>
+    <mfrac>
+      <mrow><msub><mi>α</mi><mi>A</mi></msub><mo>−</mo><mi>E</mi></mrow>
+      <mrow><mi>β</mi><mo>−</mo><mi>E</mi><mi>S</mi></mrow>
+    </mfrac>
+    <mo>,</mo>
+    <mspace width="1.2em"></mspace>
+    <msubsup><mi>c</mi><mi>A</mi><mn>2</mn></msubsup>
+    <mo>+</mo>
+    <msubsup><mi>c</mi><mi>B</mi><mn>2</mn></msubsup>
+    <mo>+</mo>
+    <mn>2</mn><msub><mi>c</mi><mi>A</mi></msub><msub><mi>c</mi><mi>B</mi></msub><mi>S</mi>
+    <mo>=</mo><mn>1</mn>
+  </mrow>
+</math>
+<span class="formula-ascii">c_B/c_A = -(alpha_A - E)/(beta - E S) ,   c_A^2 + c_B^2 + 2 c_A c_B S = 1</span>
+</div>
+
+<p><strong>Sign convention.</strong> Both atoms use global-frame orbitals.
+For a p<sub>z</sub>–p<sub>z</sub> σ pair the facing lobes then have
+<em>opposite</em> global signs, so the bonding combination is
+φ<sub>A</sub> − φ<sub>B</sub>. The solver gets this right automatically
+because S is kept signed throughout — nothing in the code takes |S|.
+Heteronuclear polarity also falls out: the atom with larger |α| takes the
+larger bonding coefficient (e.g. HF), and the app's info panel displays
+c<sub>A</sub> and c<sub>B</sub> for both MOs; by the normalization above
+these split the electron population into c<sub>A</sub>², c<sub>B</sub>²,
+and the overlap term 2c<sub>A</sub>c<sub>B</sub>S. Limiting behavior
+(S → 1 as R → 0 for identical 1s with <i>Z</i><sub>eff</sub> = 1;
+agreement with the closed form S(R) = e<sup>−R</sup>(1 + R + R²/3) at
+R = 2 and 8 a₀, where S(8&nbsp;a₀) ≈ 0.0102; E<sub>bond</sub> &lt; α with
+c<sub>A</sub> = c<sub>B</sub> for H₂ at R = 1.4) is asserted by the
+<code>lcao-s-r0</code>, <code>lcao-s-r2</code>, <code>lcao-s-r8</code>, and
+<code>mo-homonuclear</code> checks.</p>
+
+<h3>Hybrid orbitals</h3>
+
+<p>Hybrids are shown as a standalone display mode — exact fixed linear
+combinations of same-<i>n</i> s and p orbitals (both evaluated with the
+atom's s-subshell <i>Z</i><sub>eff</sub>; a documented simplification).
+They are <em>not</em> fed into the MO overlap machinery above.</p>
+
+<div class="table-wrap">
+<table class="formula-table">
+<caption>Hybrid construction tables (s ≡ <i>n</i>s, p ≡ <i>n</i>p of the same atom).</caption>
+<thead><tr><th scope="col">Set</th><th scope="col">Members</th></tr></thead>
+<tbody>
+<tr><td>sp</td><td>
+<math><mrow><msub><mi>h</mi><mo>±</mo></msub><mo>=</mo><mfrac><mrow><mi>s</mi><mo>±</mo><msub><mi>p</mi><mi>z</mi></msub></mrow><msqrt><mn>2</mn></msqrt></mfrac></mrow></math>
+<span class="formula-ascii">h_± = (s ± p_z)/sqrt(2)</span>
+</td></tr>
+<tr><td>sp²</td><td>
+<math><mrow>
+  <msub><mi>h</mi><mn>1</mn></msub><mo>=</mo>
+  <mfrac><mn>1</mn><msqrt><mn>3</mn></msqrt></mfrac><mi>s</mi>
+  <mo>+</mo>
+  <msqrt><mfrac><mn>2</mn><mn>3</mn></mfrac></msqrt><msub><mi>p</mi><mi>x</mi></msub>
+  <mo>;</mo>
+  <mspace width="0.8em"></mspace>
+  <msub><mi>h</mi><mrow><mn>2</mn><mo>,</mo><mn>3</mn></mrow></msub><mo>=</mo>
+  <mfrac><mn>1</mn><msqrt><mn>3</mn></msqrt></mfrac><mi>s</mi>
+  <mo>−</mo>
+  <mfrac><mn>1</mn><msqrt><mn>6</mn></msqrt></mfrac><msub><mi>p</mi><mi>x</mi></msub>
+  <mo>±</mo>
+  <mfrac><mn>1</mn><msqrt><mn>2</mn></msqrt></mfrac><msub><mi>p</mi><mi>y</mi></msub>
+</mrow></math>
+<span class="formula-ascii">h_1 = (1/sqrt(3)) s + sqrt(2/3) p_x ;  h_2,3 = (1/sqrt(3)) s - (1/sqrt(6)) p_x ± (1/sqrt(2)) p_y</span>
+</td></tr>
+<tr><td>sp³</td><td>
+<math><mrow>
+  <msub><mi>h</mi><mrow><mn>1</mn><mo>…</mo><mn>4</mn></mrow></msub><mo>=</mo>
+  <mfrac><mn>1</mn><mn>2</mn></mfrac>
+  <mrow><mo>(</mo><mi>s</mi><mo>±</mo><msub><mi>p</mi><mi>x</mi></msub><mo>±</mo><msub><mi>p</mi><mi>y</mi></msub><mo>±</mo><msub><mi>p</mi><mi>z</mi></msub><mo>)</mo></mrow>
+  <mspace width="0.5em"></mspace>
+  <mtext>(even number of − signs)</mtext>
+</mrow></math>
+<span class="formula-ascii">h_1..4 = (1/2)(s ± p_x ± p_y ± p_z), even number of - signs: (+++), (+--), (-+-), (--+)</span>
+</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>Explicitly, the four sp³ hybrids are ½(s+p<sub>x</sub>+p<sub>y</sub>+p<sub>z</sub>),
+½(s+p<sub>x</sub>−p<sub>y</sub>−p<sub>z</sub>),
+½(s−p<sub>x</sub>+p<sub>y</sub>−p<sub>z</sub>),
+½(s−p<sub>x</sub>−p<sub>y</sub>+p<sub>z</sub>) — pointing at alternating
+corners of a cube, i.e. a tetrahedron.</p>
+</section>
+
+<section id="superstructure">
+<h2>11. Superstructures: Hückel chains and rings</h2>
+
+<div class="spec-banner"><strong>SPECULATIVE</strong> Nearest-neighbor
+Hückel model on frozen atomic orbitals; the same caveats as §10 apply, plus
+the topology itself is idealized.</div>
+
+<p>The cluster mode extends the two-center picture to small symmetric
+N-atom chains and rings (N ≤ 6) using the Hückel approximation: every atom
+carries one basis orbital with on-site energy α, only nearest neighbors
+couple with hopping β (left symbolic — the app reports levels as
+(E − α)/β, in units of β; the spacing control sets geometry only), and
+overlap is dropped from the eigenproblem. These topologies
+have closed-form eigenpairs, so no general eigensolver is involved. For a
+<strong>chain</strong> of N atoms:</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msub><mi>E</mi><mi>k</mi></msub>
+    <mo>=</mo>
+    <mi>α</mi><mo>+</mo><mn>2</mn><mi>β</mi>
+    <mspace width="0.15em"></mspace>
+    <mi>cos</mi>
+    <mfrac><mrow><mi>k</mi><mi>π</mi></mrow><mrow><mi>N</mi><mo>+</mo><mn>1</mn></mrow></mfrac>
+    <mo>,</mo>
+    <mspace width="1.2em"></mspace>
+    <msub><mi>c</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub>
+    <mo>=</mo>
+    <msqrt><mfrac><mn>2</mn><mrow><mi>N</mi><mo>+</mo><mn>1</mn></mrow></mfrac></msqrt>
+    <mspace width="0.15em"></mspace>
+    <mi>sin</mi>
+    <mfrac><mrow><mi>j</mi><mi>k</mi><mi>π</mi></mrow><mrow><mi>N</mi><mo>+</mo><mn>1</mn></mrow></mfrac>
+    <mo>,</mo>
+    <mspace width="0.8em"></mspace>
+    <mi>k</mi><mo>=</mo><mn>1</mn><mo>…</mo><mi>N</mi>
+  </mrow>
+</math>
+<span class="formula-ascii">E_k = alpha + 2 beta cos( k pi/(N+1) ) ,   c_kj = sqrt(2/(N+1)) sin( j k pi/(N+1) ) ,   k = 1..N</span>
+</div>
+
+<p>For a <strong>ring</strong> of N atoms:</p>
+
+<div class="equation">
+<math display="block">
+  <mrow>
+    <msub><mi>E</mi><mi>k</mi></msub>
+    <mo>=</mo>
+    <mi>α</mi><mo>+</mo><mn>2</mn><mi>β</mi>
+    <mspace width="0.15em"></mspace>
+    <mi>cos</mi>
+    <mfrac><mrow><mn>2</mn><mi>π</mi><mi>k</mi></mrow><mi>N</mi></mfrac>
+    <mo>,</mo>
+    <mspace width="1.2em"></mspace>
+    <mi>k</mi><mo>=</mo><mn>0</mn><mo>,</mo><mo>±</mo><mn>1</mn><mo>,</mo><mo>±</mo><mn>2</mn><mo>,</mo><mo>…</mo>
+  </mrow>
+</math>
+<span class="formula-ascii">E_k = alpha + 2 beta cos( 2 pi k / N ) ,   k = 0, ±1, ±2, ...</span>
+</div>
+
+<p>with the levels ±k degenerate; the real eigenvectors used for display are
+the standing-wave combinations
+c<sub>kj</sub> ∝ cos(2πkj/N) and sin(2πkj/N). This reproduces the classic
+pictures — the Frost circle for rings (benzene's pattern at N = 6) and
+particle-in-a-box-like nodal counting along chains — while inheriting every
+approximation of the Hückel and frozen-orbital assumptions. Numbers here
+are indicative only.</p>
+</section>
+
+<section id="verification">
+<h2>12. Verification: what is checked and how</h2>
+
+<p>The <a href="verify.html">verify page</a> runs the numerical suite in
+your browser. Being precise about the claim: what is <em>verified</em> is
+the basis functions and their advertised mathematical properties —
+normalization, orthogonality, closed-form expectation values, node counts,
+symmetry identities, and agreement between independent implementations.
+What is only <em>estimated</em> — Slater <i>Z</i><sub>eff</sub>, orbital
+energies, and everything in §§9–11 — is checked for internal consistency
+and honestly reported against reference values, but cannot be "verified"
+into being accurate physics.</p>
+
+<p>Quadrature choices (implemented in <code>quadrature.js</code>):</p>
+
+<ul>
+  <li><strong>Radial integrals</strong>: 64-node Gauss–Legendre on each of
+  8 equal subintervals of [0, r<sub>max</sub>], with r<sub>max</sub> from
+  the orbital's suggested extent. The integrands are smooth and
+  exponentially decaying; effective accuracy is ~10<sup>−12</sup>.</li>
+  <li><strong>Angular integrals</strong>: 32-node Gauss–Legendre in
+  x = cos θ crossed with a 64-point uniform trapezoid rule in φ. The φ
+  integral annihilates every |m| ≠ |m′| pairing exactly (the trapezoid rule
+  is exact for trigonometric polynomials below the Nyquist degree), and the
+  surviving |m| = |m′| integrands are polynomials in x (the paired
+  sin<sup>|m|</sup>θ factors combine into (1 − x²)<sup>|m|</sup>) of degree
+  (l − |m|) + (l′ − |m|) + 2|m| = l + l′ ≤ 6 — far below GL-32's
+  degree-63 exactness. The 16×16
+  Gram matrix of all real harmonics with l ≤ 3 is checked against the
+  identity at tolerance 10<sup>−12</sup>.</li>
+</ul>
+
+<p>Representative checks: <code>radial-norm</code> and
+<code>radial-ortho</code> (∫r²R² = 1 for every subshell with n ≤ 7, and
+cross-<i>n</i> orthogonality for five representative same-<i>l</i> pairs,
+1s–2s through 4f–5f); <code>laguerre-xcheck</code> (Horner coefficients vs. an
+independent recurrence); the <code>theory-anchors</code> group
+(<code>anchor-R10</code>…<code>anchor-R32</code> and <code>anchor-Y00</code>,
+<code>anchor-pz</code>, <code>anchor-px</code>, <code>anchor-py</code>,
+<code>anchor-dz2</code>: the code's generated formulas equal the
+textbook forms printed on this page, sampled pointwise);
+<code>norm-3d</code> (a full 3D ∫|ψ|² through the same code path the
+renderer uses); <code>slater-regression</code> (exact rational
+<i>Z</i><sub>eff</sub> values, including the Fe example of §8);
+<code>config-vs-aufbau</code> (the authored configurations of all 118
+elements equal the Madelung generator plus its documented exceptions);
+plus the limit checks of the speculative modules and a marching-cubes
+self-test that extracts an analytic sphere and compares surface area against
+4πR². The
+"Verify this orbital" link in the app appends normalization, ⟨r⟩,
+node-count, and <i>Z</i><sub>eff</sub> checks for the exact orbital being
+viewed.</p>
+
+<p>Informational rows (<span class="badge info">Info</span>) report
+honest deviations — Slater vs. Clementi–Raimondi screening, subshell
+non-orthogonality — without passing or failing: they are measurements of
+the model's limits, not test failures.</p>
+</section>
+
+<section id="references">
+<h2>13. References</h2>
+
+<ol>
+  <li>D. J. Griffiths and D. F. Schroeter, <cite>Introduction to Quantum
+  Mechanics</cite>, 3rd ed., Cambridge University Press (2018) — ch. 4:
+  hydrogen atom, spherical harmonics, generalized Laguerre convention used
+  here.</li>
+  <li>I. N. Levine, <cite>Quantum Chemistry</cite>, 7th ed., Pearson (2014)
+  — real orbitals, LCAO-MO theory, Hückel method.</li>
+  <li>J. C. Slater, "Atomic Shielding Constants",
+  <cite>Phys. Rev.</cite> <b>36</b>, 57 (1930).</li>
+  <li>E. Clementi and D. L. Raimondi, "Atomic Screening Constants from SCF
+  Functions", <cite>J. Chem. Phys.</cite> <b>38</b>, 2686 (1963).</li>
+  <li>M. Wolfsberg and L. Helmholz, "The Spectra and Electronic Structure
+  of the Tetrahedral Ions MnO₄⁻, CrO₄⁻⁻, and ClO₄⁻",
+  <cite>J. Chem. Phys.</cite> <b>20</b>, 837 (1952).</li>
+</ol>
+</section>
+
+</main>
+</div>
+</body>
+</html>

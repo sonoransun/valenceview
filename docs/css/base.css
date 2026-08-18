@@ -1,0 +1,174 @@
+/* Valence View — base.css: design tokens (contracts.md §11), reset,
+ * typography, shared badges. Dark default; light via prefers-color-scheme. */
+
+:root {
+  color-scheme: dark light;
+  --bg: #0e1116;
+  --bg-panel: #171b22;
+  --bg-inset: #0a0d11;
+  --text: #e6e9ee;
+  --text-dim: #9aa3b2;
+  --border: #2a313c;
+  --accent: #4cc9f0;
+  --accent-2: #b18aff;
+  --pos-lobe: #ff6b6b;
+  --neg-lobe: #4dabf7;
+  --warn: #f0b429;
+  --pass: #2fbf71;
+  --fail: #ef476f;
+  --cat-alkali: #e07a5f;
+  --cat-alkaline: #f2a65a;
+  --cat-transition: #f4d35e;
+  --cat-post-transition: #9bc1bc;
+  --cat-metalloid: #84a98c;
+  --cat-nonmetal: #52b788;
+  --cat-halogen: #48cae4;
+  --cat-noble: #a78bfa;
+  --cat-lanthanide: #f28482;
+  --cat-actinide: #d685ad;
+  --radius: 8px;
+  --gap: 12px;
+  --font: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f8fa;
+    --bg-panel: #ffffff;
+    --bg-inset: #eceef2;
+    --text: #1b222c;
+    --text-dim: #55606e;
+    --border: #d6dbe3;
+    --accent: #086a96;
+    --accent-2: #6d4fc4;
+    --pos-lobe: #d64545;
+    --neg-lobe: #2b7cd3;
+    --warn: #815a00;
+    --pass: #187a4b;
+    --fail: #c22b52;
+  }
+}
+
+/* ---- reset & typography ---- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 var(--font);
+}
+
+h1, h2, h3, h4 {
+  margin: 0 0 0.4em;
+  line-height: 1.25;
+  font-weight: 650;
+}
+
+h2 { font-size: 1.05rem; }
+h3 { font-size: 0.95rem; }
+
+p { margin: 0.4em 0; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+code, pre, output {
+  font-family: var(--mono);
+  font-size: 0.9em;
+}
+
+button, input, select {
+  font: inherit;
+  color: inherit;
+}
+
+button { cursor: pointer; }
+
+select, button {
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+  padding: 4px 8px;
+}
+
+button:hover, select:hover { border-color: var(--text-dim); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+[hidden] { display: none !important; }
+
+img, canvas { max-width: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
+
+/* ---- shared utility classes (PAGES relies on these by name) ---- */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.visually-hidden-focusable {
+  position: absolute;
+  left: 8px; top: 8px;
+  z-index: 100;
+  padding: 6px 12px;
+  background: var(--bg-panel);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  transform: translateY(-200%);
+}
+.visually-hidden-focusable:focus {
+  transform: none;
+}
+
+.badge-spec {
+  display: inline-block;
+  font: 600 0.68rem/1 var(--font);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--warn);
+  color: var(--warn);
+  border-radius: 999px;
+  padding: 2px 8px;
+  vertical-align: middle;
+}
+
+.badge {
+  display: inline-block;
+  font: 700 0.72rem/1 var(--font);
+  letter-spacing: 0.05em;
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+.badge.pass { color: var(--pass); border: 1px solid var(--pass); }
+.badge.fail { color: var(--fail); border: 1px solid var(--fail); }
+
+/* ---- MathML fallback ---- */
+
+math { font-size: 1.05em; }
+
+.formula-ascii { display: none; }
+
+html.no-mathml math { display: none; }
+html.no-mathml .formula-ascii {
+  display: block;
+  padding: 6px 8px;
+  background: var(--bg-inset);
+  border-radius: calc(var(--radius) / 2);
+  overflow-x: auto;
+}

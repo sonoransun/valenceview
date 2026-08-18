@@ -1,0 +1,152 @@
+/* Valence View — layout.css: site header/nav, app grid, responsive
+ * breakpoints 1200 / 800 / 480 (spec-app §4.2 as amended: no Both tab). */
+
+/* ---- shared header (also used by theory/verify pages) ---- */
+
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  padding: 8px var(--gap);
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+.brand:hover { text-decoration: none; }
+.brand img { display: block; }
+
+.site-header nav {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+}
+
+.site-header nav a {
+  padding: 5px 12px;
+  border-radius: 999px;
+  color: var(--text-dim);
+}
+.site-header nav a:hover {
+  color: var(--text);
+  text-decoration: none;
+  background: var(--bg-inset);
+}
+.site-header nav a[aria-current="page"] {
+  color: var(--accent);
+  background: var(--bg-inset);
+}
+
+/* ---- app grid ---- */
+
+.app-grid {
+  display: grid;
+  grid-template-columns: clamp(300px, 24vw, 400px) minmax(0, 1fr) 300px;
+  gap: var(--gap);
+  padding: var(--gap);
+  align-items: start;
+  max-width: 1900px;
+  margin: 0 auto;
+}
+
+#picker-col, #controls-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  min-width: 0;
+}
+
+#viz-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  min-width: 0;
+}
+
+/* canvas containers are sized by CSS before JS runs (no CLS) */
+.viz-panel {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  max-height: 70vh;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-panel);
+}
+
+/* additive blending needs a dark ground: the 3D panel is dark in BOTH themes */
+#viz-3d { background: #0b0e14; }
+
+#scene-host {
+  position: absolute;
+  inset: 0;
+}
+#scene-host canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+#viz-2d {
+  display: flex;
+  flex-direction: column;
+}
+
+#plot2d-host {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+}
+
+/* ---- 800–1199: two columns, controls become a row below viz ---- */
+
+@media (max-width: 1199px) {
+  .app-grid {
+    grid-template-columns: clamp(280px, 34vw, 380px) minmax(0, 1fr);
+  }
+  #controls-col {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    align-items: start;
+  }
+}
+
+/* ---- <800: single column; order via display:contents on #viz-col ---- */
+
+@media (max-width: 799px) {
+  .app-grid {
+    display: flex;
+    flex-direction: column;
+  }
+  #viz-col { display: contents; }
+  #picker-col { order: 1; }
+  #viz-tabs { order: 2; }
+  #viz-3d { order: 3; }
+  #viz-2d { order: 4; }
+  #controls-col { order: 5; display: flex; }
+  #info-panel { order: 6; }
+
+  .viz-panel {
+    aspect-ratio: auto;
+    height: min(70vw, 420px);
+  }
+}
+
+/* ---- <480: tighten ---- */
+
+@media (max-width: 479px) {
+  .app-grid { padding: 8px; gap: 8px; }
+  .site-header { padding: 6px 8px; }
+  .site-header nav a { padding: 4px 8px; }
+}
