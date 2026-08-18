@@ -5,7 +5,7 @@ with the full mathematics behind each orbital and an in-browser verification sui
 100% static, dependency-free, hand-written HTML/CSS/JS — no build step, no frameworks,
 no external resources. Runs on GitHub Pages or from a double-clicked file.
 
-**Live demo:** enable GitHub Pages (below), then `https://<user>.github.io/valenceview/`
+**Live demo:** https://sonoransun.github.io/valenceview/ ⚛️
 
 ## Features
 
